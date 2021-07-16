@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Galaxy Highway</title>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            padding: 0;
+            margin: 0;
+            font: 14px Arial;
+        }
+
+        #fps {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        #state {
+            font-size: 24px;
+            color: #fff;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #stateDisplay {
+            font-size: 48px;
+        }
+
+        #start {
+            font-size: 48px;
+            border: 6px solid #0c0;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="fps"></div>
+    <div id="state">
+        <div id="stateDisplay"></div>
+        <p>Press R to start!</p>
+    </div>
+</body>
+
+</html>
