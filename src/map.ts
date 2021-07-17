@@ -24,6 +24,18 @@ const downloadMap = async (map: string): Promise<string> => {
     return response.text();
 }
 
+const createMesh = (x: number, y: number, z: number, w: number, h: number, d: number, material: THREE.Material): THREE.Mesh => {
+    const geometry = new THREE.BoxGeometry(w, h, d);
+    geometry.computeVertexNormals();
+
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.receiveShadow = true;
+    mesh.castShadow = false;
+    mesh.position.set(x, y, z);
+
+    return mesh
+};
+
 const addTile = (ctx: context.Context, row: number, tile: number, type: string) => {
     const height = parseInt(type);
     const r = tileSize / 2.0;
@@ -35,25 +47,22 @@ const addTile = (ctx: context.Context, row: number, tile: number, type: string) 
     if (!ctx.map[x][z]) ctx.map[x][z] = {};
 
     if (!isNaN(height) && height > 0.0) {
-        const geometry = new THREE.BoxGeometry(tileSize - 0.1, height - (1 - planeHeight), tileSize - 0.1);
-        const material = new THREE.MeshNormalMaterial();
-
-        const mesh = new THREE.Mesh(geometry, material);
+        const material = new THREE.MeshPhongMaterial({
+            color: new THREE.Color(0.3, 0.3, 0.3),
+        });
         const y = height === 1 ? -planeHeight : height / 2.0 - 0.5;
-
-        mesh.position.set(x, y, z);
+        const mesh = createMesh(x, y, z, tileSize - 0.1, height - (1 - planeHeight), tileSize - 0.1, material);
         ctx.scene.add(mesh);
+
         ctx.collision.createPolygon(x, z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
         ctx.map[x][z].height = y + (height - (1 - planeHeight)) / 2.0;
     } else if (type === 'F') {
-        const geometry = new THREE.BoxGeometry(tileSize - 0.1, 1.0 - (1 - planeHeight), tileSize - 0.1);
-        const material = new THREE.MeshBasicMaterial({
+        const material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(0.8, 0.0, 0.0),
         });
-
-        const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.set(x, 0.0, z);
+        const mesh = createMesh(x, 0.0, z, tileSize - 0.1, 1.0 - (1 - planeHeight), tileSize - 0.1, material);
         ctx.scene.add(mesh);
+
         ctx.collision.createPolygon(x, z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
         ctx.map[x][z].height = 0.0;
         ctx.map[x][z].attribute = Attribute.FinishLine;
@@ -66,9 +75,9 @@ const generateMap = async (ctx: context.Context) => {
 
     ctx.map = [];
 
-    rows.reverse().forEach((tiles, row) => {
+    rows.forEach((tiles, row) => {
         for (let i = 0; i < tiles.length; i++) {
-            addTile(ctx, -row, i, tiles[i]);
+            addTile(ctx, -row, i, tiles[i].replace(' ', '0'));
         }
     });
 };

@@ -26,7 +26,7 @@
                 0,
                 0
             ],
-            "name" : "Material.001",
+            "name" : "ship",
             "normalTexture" : {
                 "index" : 0,
                 "texCoord" : 0
@@ -36,7 +36,6 @@
                     "index" : 1,
                     "texCoord" : 0
                 },
-                "metallicFactor" : 0,
                 "metallicRoughnessTexture" : {
                     "index" : 2,
                     "texCoord" : 0
@@ -52,8 +51,8 @@
                     "attributes" : {
                         "POSITION" : 0,
                         "NORMAL" : 1,
-                        "TANGENT" : 2,
-                        "TEXCOORD_0" : 3
+                        "TEXCOORD_0" : 2,
+                        "COLOR_0" : 3
                     },
                     "indices" : 4,
                     "material" : 0
@@ -75,93 +74,93 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "Untitled_DefaultMaterial_Normal",
-            "uri" : "Untitled_DefaultMaterial_Normal.png"
+            "name" : "ship_Normal",
+            "uri" : "ship_Normal.png"
         },
         {
             "mimeType" : "image/png",
-            "name" : "Untitled_DefaultMaterial_Diffuse",
-            "uri" : "Untitled_DefaultMaterial_Diffuse.png"
+            "name" : "ship_baseColor",
+            "uri" : "ship_baseColor.png"
         },
         {
             "mimeType" : "image/png",
-            "name" : "Untitled_DefaultMaterial_Roughness",
-            "uri" : "Untitled_DefaultMaterial_Roughness.png"
+            "name" : "ship_occlusionRoughnessMetallic",
+            "uri" : "ship_occlusionRoughnessMetallic.png"
         }
     ],
     "accessors" : [
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 346,
+            "count" : 873,
             "max" : [
                 1.2265403270721436,
                 0.5875812768936157,
-                0.9056625962257385
+                0.8546610474586487
             ],
             "min" : [
                 -1.2265403270721436,
-                0.04486403986811638,
-                -0.7958135604858398
+                0.044863998889923096,
+                -0.8468151688575745
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 346,
+            "count" : 873,
             "type" : "VEC3"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 346,
-            "type" : "VEC4"
+            "count" : 873,
+            "type" : "VEC2"
         },
         {
             "bufferView" : 3,
             "componentType" : 5126,
-            "count" : 346,
-            "type" : "VEC2"
+            "count" : 873,
+            "type" : "VEC4"
         },
         {
             "bufferView" : 4,
             "componentType" : 5123,
-            "count" : 366,
+            "count" : 1830,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 4152,
+            "byteLength" : 10476,
             "byteOffset" : 0
         },
         {
             "buffer" : 0,
-            "byteLength" : 4152,
-            "byteOffset" : 4152
+            "byteLength" : 10476,
+            "byteOffset" : 10476
         },
         {
             "buffer" : 0,
-            "byteLength" : 5536,
-            "byteOffset" : 8304
+            "byteLength" : 6984,
+            "byteOffset" : 20952
         },
         {
             "buffer" : 0,
-            "byteLength" : 2768,
-            "byteOffset" : 13840
+            "byteLength" : 13968,
+            "byteOffset" : 27936
         },
         {
             "buffer" : 0,
-            "byteLength" : 732,
-            "byteOffset" : 16608
+            "byteLength" : 3660,
+            "byteOffset" : 41904
         }
     ],
     "buffers" : [
         {
-            "byteLength" : 17340,
-            "uri" : "spaceship.bin"
+            "byteLength" : 45564,
+            "uri" : "ship.bin"
         }
     ]
 }

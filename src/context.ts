@@ -22,14 +22,20 @@ export interface Context {
     map?: MapData,
 }
 
-export const createContext = (): Context => ({
-    camera: new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 100),
-    renderer: new THREE.WebGLRenderer({ antialias: true }),
-    scene: new THREE.Scene(),
-    collision: new Collisions(),
-    keys: {},
-    gameState: GameState.Loading,
-});
+export const createContext = (): Context => {
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    return {
+        renderer,
+        camera: new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 100),
+        scene: new THREE.Scene(),
+        collision: new Collisions(),
+        keys: {},
+        gameState: GameState.Loading,
+    }
+};
 
 export const setGameState = (ctx: Context, gameState: GameState) => {
     if (gameState === ctx.gameState) return;

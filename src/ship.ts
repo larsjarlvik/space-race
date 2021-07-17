@@ -7,6 +7,7 @@ import { Attribute } from './map';
 // Meter per second
 const ACCELERATION = 0.3;
 const GRAVITY = 0.3;
+const HOVER = 0.1;
 
 export interface Ship {
     speed: THREE.Vector3;
@@ -19,14 +20,21 @@ const load = async (ctx: context.Context): Promise<void> => {
         const loader = new GLTFLoader();
 
         loader.load(
-            '/models/spaceship.gltf',
+            '/models/ship.gltf',
             function (gltf) {
                 const model = gltf.scene.getObjectByName('ship');
+                model.castShadow = true;
+                model.traverse((o: any) => {
+                    if (o.material) {
+                        console.log(o.material);
+                    }
+                });
+
                 ctx.scene.add(model);
                 ctx.ship = {
                     model,
                     speed: new THREE.Vector3(),
-                    boundingBox: ctx.collision.createCircle(0, 0, 1.0),
+                    boundingBox: ctx.collision.createCircle(0, 0, 0.885),
                 };
                 reset(ctx);
                 resolve();
@@ -71,7 +79,7 @@ const update = (ctx: context.Context, time: number) => {
         if (ctx.ship.boundingBox.collides(blocks, result)) {
             const collider = ctx.map[result.b.x] && ctx.map[result.b.x][result.b.y];
             if (collider) {
-                if (collider.attribute === Attribute.FinishLine && result.overlap > 0.5) {
+                if (collider.attribute === Attribute.FinishLine && result.overlap > 1.8) {
                     context.setGameState(ctx, context.GameState.Completed);
                 } else if (collider.height > ctx.ship.model.position.y - 0.5) {
                     ground = Math.max(ground, collider.height);
@@ -80,33 +88,33 @@ const update = (ctx: context.Context, time: number) => {
         }
     }
 
-    if (ctx.keys['Space'] && ctx.ship.model.position.y <= ground) {
+    if (ctx.keys['Space'] && ctx.ship.model.position.y <= ground + HOVER) {
         ctx.ship.speed.y = 0.1;
     }
     ctx.ship.speed.y -= GRAVITY * time;
     ctx.ship.model.position.y += ctx.ship.speed.y;
 
-    if (ctx.ship.model.position.y <= ground) {
+    if (ctx.ship.model.position.y <= ground + HOVER) {
         if (ground - ctx.ship.model.position.y > 0.2) {
             context.setGameState(ctx, context.GameState.Crashed);
             ctx.gameStateEvent();
+        } else {
+            ctx.ship.model.position.y = ground + HOVER;
+            ctx.ship.speed.y = Math.max(ctx.ship.speed.y, 0.0);
         }
-
-        ctx.ship.model.position.y = ground;
-        ctx.ship.speed.y = Math.max(ctx.ship.speed.y, 0.0);
     }
 
     if (ctx.ship.model.position.y < -20.0) {
         context.setGameState(ctx, context.GameState.Crashed);
     }
-
-    ctx.camera.position.z = ctx.ship.model.position.z + 5.0;
 }
 
 const reset = (ctx: context.Context) => {
     ctx.ship.model.position.x = 0.0;
-    ctx.ship.model.position.y = 0.0;
-    ctx.ship.model.position.z = -1.0;
+    ctx.ship.model.position.y = 3.0;
+    ctx.ship.model.position.z = 2.5;
+
+
     ctx.ship.speed.x = 0.0;
     ctx.ship.speed.y = 0.0;
     ctx.ship.speed.z = 0.0;
