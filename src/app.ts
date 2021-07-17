@@ -71,6 +71,7 @@ window.addEventListener('keydown', (e) => {
     ctx.keys[e.code] = true;
 });
 
+
 window.addEventListener('keyup', (e) => {
     ctx.keys[e.code] = false;
 });
@@ -80,13 +81,15 @@ init();
 let frameTime = 0;
 const FIXED_TIME_STEP = 1.0 / 144.0;
 
+window.addEventListener('focus', () => {
+    lastFrame = performance.now();
+});
+
 function animation(time: number) {
     frameTime += (time - lastFrame) / 1000.0;
     lastFrame = time;
 
-    if (frameTime > 500) {
-        frameTime = FIXED_TIME_STEP;
-    }
+    if (frameTime > 500.0) frameTime = 500.0;
 
     while (frameTime > 0.0) {
         if (ctx.gameState === context.GameState.Running) {

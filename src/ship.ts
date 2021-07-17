@@ -122,7 +122,6 @@ const updateExhaust = (ctx: context.Context, time: number) => {
     p.geometry.attributes.position.needsUpdate = true;
 };
 
-
 const update = (ctx: context.Context, time: number) => {
     if (!ctx.ship || !ctx.map) return;
 
@@ -158,11 +157,12 @@ const update = (ctx: context.Context, time: number) => {
     for (const blocks of potentials) {
         if (ctx.ship.boundingBox.collides(blocks, result)) {
             const collider = ctx.map[result.b.x] && ctx.map[result.b.x][result.b.y];
+
             if (collider) {
                 if (collider.attribute === Attribute.FinishLine && result.overlap > 1.2) {
                     context.setGameState(ctx, context.GameState.Completed);
-                } else if (collider.height > ctx.ship.model.position.y - 0.5) {
-                    ground = Math.max(ground, collider.height);
+                } else if (collider.top > ctx.ship.model.position.y - 0.5 && collider.bottom < ctx.ship.model.position.y + 0.5) {
+                    ground = Math.max(ground, collider.top);
                 }
             }
         }

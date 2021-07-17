@@ -9,7 +9,8 @@ export enum Attribute {
 }
 
 export interface Tile {
-    height?: number;
+    top?: number;
+    bottom?: number;
     attribute?: Attribute;
 }
 
@@ -55,7 +56,8 @@ const addTile = (ctx: context.Context, row: number, tile: number, type: string) 
         ctx.scene.add(mesh);
 
         ctx.collision.createPolygon(x, z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
-        ctx.map[x][z].height = y + (height - (1 - planeHeight)) / 2.0;
+        ctx.map[x][z].bottom = y;
+        ctx.map[x][z].top = y + (height - (1 - planeHeight)) / 2.0;
     } else if (type === 'F') {
         const material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(0.8, 0.0, 0.0),
@@ -64,7 +66,8 @@ const addTile = (ctx: context.Context, row: number, tile: number, type: string) 
         ctx.scene.add(mesh);
 
         ctx.collision.createPolygon(x, z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
-        ctx.map[x][z].height = 0.0;
+        ctx.map[x][z].bottom = -planeHeight;
+        ctx.map[x][z].top = 0.0;
         ctx.map[x][z].attribute = Attribute.FinishLine;
     }
 }
