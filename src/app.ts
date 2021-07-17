@@ -11,6 +11,7 @@ let lastFrame = 0;
 const fpsDisplay = document.getElementById('fps');
 const stateUi = document.getElementById('state');
 const stateDisplay = document.getElementById('stateDisplay');
+const loadingDisplay = document.getElementById('loading');
 
 const ambient = new THREE.AmbientLight(new THREE.Color(2.0, 2.0, 2.0));
 const directional = new THREE.DirectionalLight(0xffffff, 7.0);
@@ -32,7 +33,8 @@ skybox.create(ctx);
 const init = async () => {
     await map.generateMap(ctx);
     const s = await ship.load(ctx);
-    ctx.gameState = context.GameState.Loading;
+    ctx.gameState = context.GameState.Paused;
+    loadingDisplay.style.opacity = '0';
 };
 
 ctx.renderer.physicallyCorrectLights = true;

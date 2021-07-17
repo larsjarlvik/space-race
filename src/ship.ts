@@ -159,7 +159,7 @@ const update = (ctx: context.Context, time: number) => {
         if (ctx.ship.boundingBox.collides(blocks, result)) {
             const collider = ctx.map[result.b.x] && ctx.map[result.b.x][result.b.y];
             if (collider) {
-                if (collider.attribute === Attribute.FinishLine && result.overlap > 1.8) {
+                if (collider.attribute === Attribute.FinishLine && result.overlap > 1.2) {
                     context.setGameState(ctx, context.GameState.Completed);
                 } else if (collider.height > ctx.ship.model.position.y - 0.5) {
                     ground = Math.max(ground, collider.height);

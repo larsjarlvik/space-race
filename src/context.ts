@@ -4,7 +4,7 @@ import { MapData } from './map';
 import { Ship } from './ship';
 
 export enum GameState {
-    Loading,
+    Paused,
     Running,
     Crashed,
     Completed,
@@ -33,7 +33,7 @@ export const createContext = (): Context => {
         scene: new THREE.Scene(),
         collision: new Collisions(),
         keys: {},
-        gameState: GameState.Loading,
+        gameState: GameState.Paused,
     }
 };
 

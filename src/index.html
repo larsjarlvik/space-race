@@ -39,6 +39,23 @@
             border: 6px solid #0c0;
             padding: 12px;
         }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #060606;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 48px;
+            transition: opacity 0.5s ease-out;
+            opacity: 1;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -48,6 +65,7 @@
         <div id="stateDisplay"></div>
         <p>Press R to start!</p>
     </div>
+    <div id="loading">Loading...</div>
 </body>
 
 </html>
