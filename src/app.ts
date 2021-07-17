@@ -63,7 +63,7 @@ window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyR') {
         ship.reset(ctx);
         stateUi.style.display = 'none';
-        ctx.gameState = context.GameState.Running;
+        context.setGameState(ctx, context.GameState.Running);
     }
 
     ctx.keys[e.code] = true;

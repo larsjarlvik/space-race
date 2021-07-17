@@ -39,6 +39,15 @@ export const createContext = (): Context => {
 
 export const setGameState = (ctx: Context, gameState: GameState) => {
     if (gameState === ctx.gameState) return;
+
+    if (gameState === GameState.Running) {
+        ctx.scene.add(ctx.ship.model);
+        ctx.scene.add(ctx.ship.particles);
+    } else {
+        ctx.scene.remove(ctx.ship.model);
+        ctx.scene.remove(ctx.ship.particles);
+    }
+
     ctx.gameState = gameState;
     ctx.gameStateEvent && ctx.gameStateEvent();
 };

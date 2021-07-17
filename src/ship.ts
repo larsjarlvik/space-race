@@ -8,11 +8,17 @@ import { Attribute } from './map';
 const ACCELERATION = 0.3;
 const GRAVITY = 0.3;
 const HOVER = 0.1;
+const PARTICLE_SPREAD = 0.16;
+const PARTICLE_X = 0.15;
+const PARTICLE_Y = 0.25;
+const PARTICLE_Z = 0.78;
+const PARTICLE_COUNT = 3000;
 
 export interface Ship {
     speed: THREE.Vector3;
     model: THREE.Object3D;
     boundingBox: Circle;
+    particles?: THREE.Points;
 }
 
 const load = async (ctx: context.Context): Promise<void> => {
@@ -30,18 +36,92 @@ const load = async (ctx: context.Context): Promise<void> => {
                     }
                 });
 
-                ctx.scene.add(model);
                 ctx.ship = {
                     model,
                     speed: new THREE.Vector3(),
                     boundingBox: ctx.collision.createCircle(0, 0, 0.885),
                 };
                 reset(ctx);
+                exhaust(ctx);
                 resolve();
             }
         );
     });
 };
+
+
+const exhaust = (ctx: context.Context) => {
+    const geometry = new THREE.BufferGeometry();
+    const textureLoader = new THREE.TextureLoader();
+    const sprite = textureLoader.load('/models/exhaust.png');
+
+    const vertices = [];
+    const startTime = [];
+    const lifeTime = [];
+    const velocity = [];
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const x = Math.random() * PARTICLE_SPREAD - (PARTICLE_SPREAD / 2.0);
+        const y = Math.random() * PARTICLE_SPREAD - (PARTICLE_SPREAD / 2.0);
+        const z = 0.0;
+
+        velocity.push(Math.random() * 5.0);
+        vertices.push(x, y, z);
+        startTime.push(performance.now());
+        lifeTime.push(Math.random());
+    }
+
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+    geometry.setAttribute('startTime', new THREE.Float32BufferAttribute(startTime, 1));
+    geometry.setAttribute('lifeTime', new THREE.Float32BufferAttribute(lifeTime, 1));
+    geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocity, 1));
+
+    const material = new THREE.PointsMaterial({
+        size: 0.1,
+        map: sprite,
+        blending: THREE.AdditiveBlending,
+        depthTest: false,
+        transparent: true,
+        color: new THREE.Color(0.066, 0.39, 0.75),
+    });
+
+    const particles = new THREE.Points(geometry, material);
+    particles.frustumCulled = false;
+    ctx.ship.particles = particles;
+};
+
+const updateExhaust = (ctx: context.Context, time: number) => {
+    const sp = ctx.ship.model.position;
+    const p = ctx.ship.particles;
+
+    for (let i = 0, l = PARTICLE_COUNT; i < l; i++) {
+        if (p.geometry.getAttribute('startTime').getX(i) < performance.now() - p.geometry.getAttribute('lifeTime').getX(i)) {
+            const rand = Math.random() < 0.5;
+
+            const angle = Math.random() * Math.PI * 2;
+
+            const vec = new THREE.Vector3(
+                (rand ? PARTICLE_X : -PARTICLE_X) + (Math.cos(angle) * (PARTICLE_SPREAD / 2.0) * Math.random()),
+                PARTICLE_Y + (Math.sin(angle) * (PARTICLE_SPREAD / 2.0) * Math.random()),
+                PARTICLE_Z,
+            );
+
+            const dist = PARTICLE_SPREAD - Math.sqrt(vec.x * vec.x + vec.y * vec.y);
+            vec.applyEuler(ctx.ship.model.rotation);
+
+            p.geometry.attributes.position.setXYZ(i, sp.x + vec.x, sp.y + vec.y, sp.z + vec.z);
+            p.geometry.getAttribute('startTime').setX(i, performance.now());
+            p.geometry.getAttribute('velocity').setX(i, Math.random() * Math.max(0.0, ctx.ship.speed.z) * 3000.0 * dist);
+        }
+
+        p.geometry.attributes.position.setZ(i, p.geometry.attributes.position.getZ(i) - p.geometry.getAttribute('velocity').getX(i) * time);
+    }
+
+    p.geometry.getAttribute('startTime').needsUpdate = true;
+    p.geometry.getAttribute('velocity').needsUpdate = true;
+    p.geometry.attributes.position.needsUpdate = true;
+};
+
 
 const update = (ctx: context.Context, time: number) => {
     if (!ctx.ship || !ctx.map) return;
@@ -107,14 +187,18 @@ const update = (ctx: context.Context, time: number) => {
     if (ctx.ship.model.position.y < -20.0) {
         context.setGameState(ctx, context.GameState.Crashed);
     }
+
+    ctx.ship.model.rotation.x = ctx.ship.speed.y * 4.0;
+    ctx.ship.model.rotation.z = -ctx.ship.speed.x * 3.0;
+    ctx.ship.model.rotation.y = -ctx.ship.speed.x * 3.0;
+
+    updateExhaust(ctx, time);
 }
 
 const reset = (ctx: context.Context) => {
     ctx.ship.model.position.x = 0.0;
     ctx.ship.model.position.y = 3.0;
     ctx.ship.model.position.z = 2.5;
-
-
     ctx.ship.speed.x = 0.0;
     ctx.ship.speed.y = 0.0;
     ctx.ship.speed.z = 0.0;
