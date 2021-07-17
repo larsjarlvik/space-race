@@ -78,18 +78,25 @@ window.addEventListener('keyup', (e) => {
 init();
 
 let frameTime = 0;
+const FIXED_TIME_STEP = 1.0 / 144.0;
+
 function animation(time: number) {
-    frameTime = (time - lastFrame) / 1000.0;
+    frameTime += (time - lastFrame) / 1000.0;
     lastFrame = time;
 
-    const z = ctx.ship ? ctx.ship.model.position.z : 0.0;
-
-
-    if (ctx.gameState === context.GameState.Running) {
-        ship.update(ctx, frameTime);
-        ctx.collision.update();
+    if (frameTime > 500) {
+        frameTime = FIXED_TIME_STEP;
     }
 
+    while (frameTime > 0.0) {
+        if (ctx.gameState === context.GameState.Running) {
+            ship.update(ctx, FIXED_TIME_STEP);
+            ctx.collision.update();
+        }
+        frameTime -= FIXED_TIME_STEP;
+    }
+
+    const z = ctx.ship ? ctx.ship.model.position.z : 0.0;
     ctx.camera.position.z = z + 5.0;
     directional.position.set(10.0, 10.0, z - 8.0);
     directional.target.position.set(0.0, 0.0, z);
