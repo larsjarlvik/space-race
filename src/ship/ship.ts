@@ -104,7 +104,6 @@ export class Ship {
         if (this.model.position.y <= ground + HOVER) {
             if (ground - this.model.position.y > 0.2) {
                 ctx.setGameState(GameState.Crashed);
-                ctx.gameStateEvent();
             } else {
                 this.model.position.y = ground + HOVER;
                 this.speed.y = Math.max(this.speed.y, 0.0);
@@ -123,13 +122,14 @@ export class Ship {
     }
 
     public add(ctx: Context) {
-        ctx.scene.add(this.model);
+        this.reset();
         this.exhaust.add(ctx);
+        ctx.scene.add(this.model);
     }
 
     public remove(ctx: Context) {
-        ctx.scene.add(ctx.ship.model);
         this.exhaust.remove(ctx);
+        ctx.scene.remove(ctx.ship.model);
     }
 
     get position(): THREE.Vector3 {

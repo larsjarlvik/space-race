@@ -3,12 +3,19 @@ import { Collisions } from 'detect-collisions';
 import { Level } from 'level/level';
 import { Ship } from 'ship/ship';
 import { Camera } from 'camera';
+import { createState, State as StateWrapper } from '@hookstate/core';
 
 export enum GameState {
+    Loading,
     Paused,
     Running,
     Crashed,
     Completed,
+}
+
+export interface State {
+    gameState: GameState;
+    fps: number;
 }
 
 export enum KeyState {
@@ -22,11 +29,10 @@ export class Context {
     public camera: Camera;
     public collision: Collisions;
     public keys: { [key: string]: KeyState };
-    public gameState: GameState;
-    public gameStateEvent?: () => void;
 
     public ship?: Ship;
     public level?: Level;
+    public store: StateWrapper<State>;
 
     constructor() {
         this.scene = new THREE.Scene;
@@ -35,8 +41,8 @@ export class Context {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.camera = new Camera(this);
         this.collision = new Collisions();
-        this.gameState = GameState.Paused;
         this.keys = {};
+        this.store = createState({ gameState: GameState.Loading, fps: 0 } as State);
 
         window.addEventListener('resize', this.resize.bind(this));
         window.addEventListener('keydown', this.keyDown.bind(this));
@@ -44,19 +50,20 @@ export class Context {
     }
 
     public setGameState(gameState: GameState) {
-        if (gameState === this.gameState) return;
+        if (gameState === this.store.gameState.get()) return;
 
         if (gameState === GameState.Running) {
+            this.level.reset();
             this.ship.add(this);
         } else {
             this.ship.remove(this);
         }
 
-        this.gameState = gameState;
-        this.gameStateEvent && this.gameStateEvent();
+        this.store.gameState.set(gameState);
     }
 
     private resize() {
+        this.camera.resize();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 

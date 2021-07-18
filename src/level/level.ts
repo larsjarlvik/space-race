@@ -21,11 +21,11 @@ export class Level {
     private tiles: MapData;
 
     public async load(ctx: Context, name: string) {
+        await this.setSkyBox(ctx);
+
         const data = await this.downloadMap(name);
         const rows = data.split('\n');
-
         this.tiles = [];
-        this.setSkyBox(ctx);
 
         rows.forEach((tiles, row) => {
             this.tiles[row] = [];
@@ -121,19 +121,22 @@ export class Level {
         return mesh;
     }
 
-    private setSkyBox(ctx: Context) {
-        const loader = new THREE.CubeTextureLoader();
-        const texture = loader.load([
-            '/skybox/right.jpg',
-            '/skybox/left.jpg',
-            '/skybox/top.jpg',
-            '/skybox/bottom.jpg',
-            '/skybox/front.jpg',
-            '/skybox/back.jpg',
-        ]);
-
-        texture.mapping = THREE.CubeReflectionMapping;
-        ctx.scene.background = texture;
-        ctx.scene.environment = texture;
+    private async setSkyBox(ctx: Context): Promise<void> {
+        return new Promise((resolve) => {
+            const loader = new THREE.CubeTextureLoader();
+            loader.load([
+                '/skybox/right.jpg',
+                '/skybox/left.jpg',
+                '/skybox/top.jpg',
+                '/skybox/bottom.jpg',
+                '/skybox/front.jpg',
+                '/skybox/back.jpg',
+            ], (texture) => {
+                texture.mapping = THREE.CubeReflectionMapping;
+                ctx.scene.background = texture;
+                ctx.scene.environment = texture;
+                resolve();
+            });
+        });
     }
 }

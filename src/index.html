@@ -2,6 +2,9 @@
 <html lang="en">
 
 <head>
+    <script>
+        window.process = {}
+    </script>
     <title>Galaxy Highway</title>
     <style>
         html,
@@ -9,63 +12,36 @@
             overflow: hidden;
             padding: 0;
             margin: 0;
-            font: 14px Arial;
+            font: 24px Arial;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0.0, 0.0, 0.0, 0.5);
+            background: #000;
         }
 
         #fps {
             position: fixed;
             top: 10px;
             left: 10px;
-            color: #fff;
             font-weight: 600;
+            font-size: 14px;
         }
 
-        #state {
-            font-size: 24px;
-            color: #fff;
-            text-align: center;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        #stateDisplay {
-            font-size: 48px;
-        }
-
-        #start {
-            font-size: 48px;
-            border: 6px solid #0c0;
-            padding: 12px;
-        }
-
-        #loading {
+        #ui {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
             bottom: 0;
-            background: #060606;
+            right: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 48px;
-            transition: opacity 0.5s ease-out;
-            opacity: 1;
-            pointer-events: none;
+            justify-content: stretch;
+            align-items: stretch;
         }
     </style>
 </head>
 
 <body>
     <div id="fps"></div>
-    <div id="state">
-        <div id="stateDisplay"></div>
-        <p>Press R to start!</p>
-    </div>
-    <div id="loading">Loading...</div>
+    <div id="ui"></div>
 </body>
 
 </html>
