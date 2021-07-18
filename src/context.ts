@@ -10,12 +10,17 @@ export enum GameState {
     Completed,
 }
 
+export enum KeyState {
+    Pressed = 1 << 0,
+    Repeat = 1 << 1,
+}
+
 export interface Context {
     camera: THREE.PerspectiveCamera,
     renderer: THREE.WebGLRenderer,
     scene: THREE.Scene,
     collision: Collisions,
-    keys: { [key: string]: boolean },
+    keys: { [key: string]: KeyState },
     gameState: GameState,
     gameStateEvent?: () => void;
     ship?: Ship,
@@ -29,7 +34,7 @@ export const createContext = (): Context => {
 
     return {
         renderer,
-        camera: new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 100),
+        camera: new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 150),
         scene: new THREE.Scene(),
         collision: new Collisions(),
         keys: {},

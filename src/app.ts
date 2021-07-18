@@ -64,16 +64,20 @@ window.addEventListener('resize', () => {
 window.addEventListener('keydown', (e) => {
     if (e.code === 'KeyR') {
         ship.reset(ctx);
+        map.reset(ctx);
         stateUi.style.display = 'none';
         context.setGameState(ctx, context.GameState.Running);
     }
 
-    ctx.keys[e.code] = true;
+    if (ctx.keys[e.code]) {
+        ctx.keys[e.code] |= context.KeyState.Repeat;
+    } else {
+        ctx.keys[e.code] = context.KeyState.Pressed;
+    }
 });
 
-
 window.addEventListener('keyup', (e) => {
-    ctx.keys[e.code] = false;
+    ctx.keys[e.code] = undefined;
 });
 
 init();
@@ -95,15 +99,19 @@ function animation(time: number) {
         if (ctx.gameState === context.GameState.Running) {
             ship.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
+
+            const z = ctx.ship ? ctx.ship.model.position.z : 0.0;
+            const x = ctx.ship ? ctx.ship.model.position.x : 0.0;
+            ctx.camera.position.z = z + 5.0;
+            ctx.camera.position.x = x / 2.0;
+            directional.position.set(x - 10.0, 10.0, z - 8.0);
+            directional.target.position.set(x, 0.0, z);
+            directional.target.updateMatrixWorld();
+
+            map.update(ctx);
         }
         frameTime -= FIXED_TIME_STEP;
     }
-
-    const z = ctx.ship ? ctx.ship.model.position.z : 0.0;
-    ctx.camera.position.z = z + 5.0;
-    directional.position.set(10.0, 10.0, z - 8.0);
-    directional.target.position.set(0.0, 0.0, z);
-    directional.target.updateMatrixWorld();
 
     ctx.renderer.render(ctx.scene, ctx.camera);
 

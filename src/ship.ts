@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import * as context from './context';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Circle } from 'detect-collisions';
-import { Attribute } from './map';
+import { Attribute, tileSize } from './map';
 
 // Meter per second
 const ACCELERATION = 0.3;
@@ -30,11 +30,6 @@ const load = async (ctx: context.Context): Promise<void> => {
             function (gltf) {
                 const model = gltf.scene.getObjectByName('ship');
                 model.castShadow = true;
-                model.traverse((o: any) => {
-                    if (o.material) {
-                        console.log(o.material);
-                    }
-                });
 
                 ctx.ship = {
                     model,
@@ -156,8 +151,10 @@ const update = (ctx: context.Context, time: number) => {
     let ground = -1000.0;
     for (const blocks of potentials) {
         if (ctx.ship.boundingBox.collides(blocks, result)) {
-            const collider = ctx.map[result.b.x] && ctx.map[result.b.x][result.b.y];
+            const x = result.b.x / tileSize + 3;
+            const z = (Math.abs(result.b.y - 4) - tileSize / 2) / 4;
 
+            const collider = ctx.map[z] && ctx.map[z][x];
             if (collider) {
                 if (collider.attribute === Attribute.FinishLine && result.overlap > 1.2) {
                     context.setGameState(ctx, context.GameState.Completed);
@@ -168,7 +165,7 @@ const update = (ctx: context.Context, time: number) => {
         }
     }
 
-    if (ctx.keys['Space'] && ctx.ship.model.position.y <= ground + HOVER) {
+    if (ctx.keys['Space'] === context.KeyState.Pressed && ctx.ship.model.position.y <= ground + HOVER) {
         ctx.ship.speed.y = 0.1;
     }
     ctx.ship.speed.y -= GRAVITY * time;
@@ -193,7 +190,7 @@ const update = (ctx: context.Context, time: number) => {
     ctx.ship.model.rotation.y = -ctx.ship.speed.x * 3.0;
 
     updateExhaust(ctx, time);
-}
+};
 
 const reset = (ctx: context.Context) => {
     ctx.ship.model.position.x = 0.0;
@@ -204,8 +201,7 @@ const reset = (ctx: context.Context) => {
     ctx.ship.speed.z = 0.0;
     ctx.ship.boundingBox.x = ctx.ship.model.position.x;
     ctx.ship.boundingBox.y = ctx.ship.model.position.z;
-}
-
+};
 
 const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
 
