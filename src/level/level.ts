@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Context } from '../context';
+import { Context } from 'context';
 
 const TILE_SIZE = 4.0;
 const PLANE_HEIGHT = 0.1;

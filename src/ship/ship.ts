@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Circle } from 'detect-collisions';
-import { Attribute } from '../level/level';
+import { Context, GameState, KeyState } from 'context';
+import { Attribute } from 'level/level';
 import { Exhaust } from './exhaust';
-import { Context, GameState, KeyState } from '../context';
 
 const ACCELERATION = 0.3;
 const GRAVITY = 0.3;

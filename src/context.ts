@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { Collisions } from 'detect-collisions';
-import { Level } from './level/level';
-import { Ship } from './ship/ship';
+import { Level } from 'level/level';
+import { Ship } from 'ship/ship';
+import { Camera } from 'camera';
 
 export enum GameState {
     Paused,
@@ -16,9 +17,9 @@ export enum KeyState {
 }
 
 export class Context {
-    public camera: THREE.PerspectiveCamera;
     public renderer: THREE.WebGLRenderer;
     public scene: THREE.Scene;
+    public camera: Camera;
     public collision: Collisions;
     public keys: { [key: string]: KeyState };
     public gameState: GameState;
@@ -29,10 +30,10 @@ export class Context {
 
     constructor() {
         this.scene = new THREE.Scene;
-        this.camera = new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 150);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.camera = new Camera(this);
         this.collision = new Collisions();
         this.gameState = GameState.Paused;
         this.keys = {};
@@ -57,8 +58,6 @@ export class Context {
 
     private resize() {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
     }
 
     private keyDown(e: KeyboardEvent) {

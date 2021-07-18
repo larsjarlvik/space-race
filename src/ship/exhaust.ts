@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Context } from '../context';
+import { Context } from 'context';
 
 const PARTICLE_SPREAD = 0.16;
 const PARTICLE_X = 0.15;
