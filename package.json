@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack"
+    "build": "webpack",
+    "lint": "node node_modules/eslint/bin/eslint.js ."
   },
   "author": "",
   "license": "ISC",
