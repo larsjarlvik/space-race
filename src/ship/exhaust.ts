@@ -15,10 +15,10 @@ export class Exhaust {
         const textureLoader = new THREE.TextureLoader();
         const sprite = textureLoader.load('/models/exhaust.png');
 
-        const vertices = [];
-        const startTime = [];
-        const lifeTime = [];
-        const velocity = [];
+        const vertices: number[] = [];
+        const startTime: number[] = [];
+        const lifeTime: number[] = [];
+        const velocity: number[] = [];
 
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const x = Math.random() * PARTICLE_SPREAD - (PARTICLE_SPREAD / 2.0);

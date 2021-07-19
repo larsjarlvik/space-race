@@ -1,12 +1,12 @@
 import * as React from 'react';
+import styled from 'styled-components';
 
-const style = {
-    position: 'fixed',
-    top: '12px',
-    left: '12px',
-    fontSize: '14px',
-} as React.CSSProperties;
-
+const Container = styled.div`
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    font-size: 16px;
+`;
 
 interface Props {
     fps: number;
@@ -14,8 +14,8 @@ interface Props {
 
 export const Fps = React.memo((props: Props) => {
     return (
-        <div style={style}>
+        <Container>
             FPS: {props.fps}
-        </div>
+        </Container>
     );
 });

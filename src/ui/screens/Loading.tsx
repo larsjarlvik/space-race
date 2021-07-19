@@ -2,6 +2,6 @@ import * as React from 'react';
 
 export const Loading = React.memo(() => {
     return (
-        <div id="loading">Loading...</div>
+        <h2 id="loading">Loading...</h2>
     );
 });

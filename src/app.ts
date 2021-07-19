@@ -2,9 +2,7 @@ import * as THREE from 'three';
 import { Context, GameState, KeyState } from 'context';
 import { Level } from 'level/level';
 import { Ship } from 'ship/ship';
-import * as ui from 'ui';
-
-(window as any).process = {};
+import * as ui from 'ui/Index';
 
 const ctx = new Context();
 ui.init(ctx);
@@ -44,15 +42,18 @@ function animation(time: number) {
     if (frameTime > 500.0) frameTime = 500.0;
 
     if (ctx.keys['KeyR'] === KeyState.Pressed) {
-        ctx.setGameState(GameState.Running);
+        ctx.setGameState(GameState.Running, true);
+    }
+    if (ctx.keys['KeyM'] === KeyState.Pressed) {
+        ctx.store.mapMaking.set(!ctx.store.mapMaking.get());
     }
 
     while (frameTime > 0.0) {
         if (ctx.store.gameState.get() === GameState.Running) {
-            ctx.ship.update(ctx, FIXED_TIME_STEP);
+            ctx.ship!.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
             ctx.camera.position = ctx.ship ? ctx.ship.position : new THREE.Vector3();
-            ctx.level.update(ctx);
+            ctx.level!.update(ctx);
         }
         frameTime -= FIXED_TIME_STEP;
     }
@@ -65,6 +66,8 @@ function animation(time: number) {
         fps = 0;
         lastUpdate = time;
     }
+
+    ctx.update();
 }
 
 if (module.hot) {

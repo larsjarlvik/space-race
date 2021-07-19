@@ -7,8 +7,9 @@ interface Props {
 export const Paused = React.memo((props: Props) => {
     return (
         <section>
-            <div>{props.displayText}</div>
-            <p>Press R to start!</p>
+            <h2>{props.displayText}</h2>
+            <p>Start Game <span className="key">[R]</span></p>
+            <p>Create Map <span className="key">[M]</span></p>
         </section>
     );
 });

@@ -15,6 +15,7 @@ export enum GameState {
 
 export interface State {
     gameState: GameState;
+    mapMaking: boolean;
     fps: number;
 }
 
@@ -28,7 +29,7 @@ export class Context {
     public scene: THREE.Scene;
     public camera: Camera;
     public collision: Collisions;
-    public keys: { [key: string]: KeyState };
+    public keys: { [key: string]: KeyState | undefined };
 
     public ship?: Ship;
     public level?: Level;
@@ -42,24 +43,34 @@ export class Context {
         this.camera = new Camera(this);
         this.collision = new Collisions();
         this.keys = {};
-        this.store = createState({ gameState: GameState.Loading, fps: 0 } as State);
+        this.store = createState({
+            gameState: GameState.Loading,
+            fps: 0,
+            mapMaking: false,
+        } as State);
 
         window.addEventListener('resize', this.resize.bind(this));
         window.addEventListener('keydown', this.keyDown.bind(this));
         window.addEventListener('keyup', this.keyUp.bind(this));
     }
 
-    public setGameState(gameState: GameState) {
-        if (gameState === this.store.gameState.get()) return;
+    public setGameState(gameState: GameState, force = false) {
+        if (!force && gameState === this.store.gameState.get()) return;
 
         if (gameState === GameState.Running) {
-            this.level.reset();
-            this.ship.add(this);
+            this.level!.reset();
+            this.ship!.add(this);
         } else {
-            this.ship.remove(this);
+            this.ship!.remove(this);
         }
 
         this.store.gameState.set(gameState);
+    }
+
+    public update() {
+        Object.keys(this.keys).filter(k => this.keys[k] === KeyState.Pressed).forEach(k => {
+            this.keys[k] = KeyState.Repeat;
+        });
     }
 
     private resize() {
@@ -68,9 +79,7 @@ export class Context {
     }
 
     private keyDown(e: KeyboardEvent) {
-        if (this.keys[e.code]) {
-            this.keys[e.code] |= KeyState.Repeat;
-        } else {
+        if (!this.keys[e.code]) {
             this.keys[e.code] = KeyState.Pressed;
         }
     }

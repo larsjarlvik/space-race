@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Circle } from 'detect-collisions';
-import { Context, GameState, KeyState } from 'context';
+import { Context, GameState } from 'context';
 import { Attribute } from 'level/level';
 import { Exhaust } from './exhaust';
 
@@ -12,7 +12,7 @@ const MAX_SPEED_X = 0.5;
 const MAX_SPEED_Z = 0.5;
 const DECEL_X = 1.02;
 const DECEL_Z = 1.005;
-const COLLIDER_Z_PAD = 0.5;
+const COLLIDER_Z_PAD = 1.0;
 const LEAN = 4.0;
 
 export class Ship {
@@ -32,7 +32,7 @@ export class Ship {
             const loader = new GLTFLoader();
 
             loader.load('/models/ship.gltf', (gltf) => {
-                this.model = gltf.scene.getObjectByName('ship');
+                this.model = gltf.scene.getObjectByName('ship')!;
                 this.model.castShadow = true;
                 resolve();
             });
@@ -95,7 +95,7 @@ export class Ship {
             }
         }
 
-        if (ctx.keys['Space'] === KeyState.Pressed && this.model.position.y <= ground + HOVER) {
+        if (ctx.keys['Space'] && this.model.position.y <= ground + HOVER) {
             this.speed.y = 0.1;
         }
         this.speed.y -= GRAVITY * time;
@@ -129,7 +129,7 @@ export class Ship {
 
     public remove(ctx: Context) {
         this.exhaust.remove(ctx);
-        ctx.scene.remove(ctx.ship.model);
+        ctx.ship && ctx.scene.remove(ctx.ship.model);
     }
 
     get position(): THREE.Vector3 {

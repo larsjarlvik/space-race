@@ -1,31 +1,35 @@
 import { useState } from '@hookstate/core';
+import styled, { css } from 'styled-components';
 import { Context, GameState } from 'context';
 import * as React from 'react';
 import { Fps } from './Fps';
-import { Loading } from './screens/loading';
-import { Paused } from './screens/Paused';
+import { Loading } from './Screens/Loading';
+import { Paused } from './Screens/Paused';
+import { Level } from './Level/Overview';
 
 interface Props {
     ctx: Context;
 }
 
-const style = {
-    backdropFilter: 'blur(8px)',
-    opacity: 1,
-    background: 'rgba(0, 0, 0, 0.7)',
-    transition: 'opacity 0.3s ease-in-out',
-    flex: '1',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    textAlign: 'center',
-} as React.CSSProperties;
 
-const hideStyle = {
-    ...style,
-    opacity: 0,
-    pointerEvents: 'none',
-} as React.CSSProperties;
+
+const Backdrop = styled.main<{ show: boolean }>`
+    opacity: 0;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.7);
+    transition: opacity 0.3s ease-in-out;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    backdrop-filter: blur(8px);
+
+    ${({ show }) => show && css`
+        opacity: 1;
+        pointer-events: all;
+    `}
+`;
 
 const getScreen = (gameState: GameState) => {
     switch (gameState) {
@@ -45,13 +49,15 @@ const getScreen = (gameState: GameState) => {
 export const Main = React.memo((props: Props) => {
     const state = useState(props.ctx.store);
     const screen = getScreen(state.gameState.get());
+    const mapMaking = state.mapMaking.get() ? <Level ctx={props.ctx} /> : null;
 
     return (
         <>
-            <main style={screen ? style : hideStyle}>
+            <Backdrop show={screen !== null}>
                 {screen}
-            </main>
+            </Backdrop>
             <Fps fps={state.fps.get()} />
+            {mapMaking}
         </>
     );
 });

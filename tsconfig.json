@@ -1,14 +1,25 @@
 {
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
     "compilerOptions": {
-        "baseUrl": "src",
-        "outDir": "./dist/",
-        "noImplicitAny": true,
-        "module": "es6",
-        "target": "es5",
-        "allowJs": true,
+        "allowJs": false,
+        "target": "es6",
+        "module": "esnext",
         "moduleResolution": "node",
+        "outDir": "./dist",
+        "baseUrl": "src",
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "strictNullChecks": true,
+        "noImplicitThis": true,
+        "alwaysStrict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
         "sourceMap": true,
         "jsx": "react-jsx",
-        "jsxImportSource": "react",
     }
 }
