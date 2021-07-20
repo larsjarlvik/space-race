@@ -33,7 +33,7 @@ export class Context {
 
     public ship?: Ship;
     public level?: Level;
-    public store: StateWrapper<State>;
+    public state: StateWrapper<State>;
 
     constructor() {
         this.scene = new THREE.Scene;
@@ -43,7 +43,7 @@ export class Context {
         this.camera = new Camera(this);
         this.collision = new Collisions();
         this.keys = {};
-        this.store = createState({
+        this.state = createState({
             gameState: GameState.Loading,
             fps: 0,
             mapMaking: false,
@@ -55,7 +55,7 @@ export class Context {
     }
 
     public setGameState(gameState: GameState, force = false) {
-        if (!force && gameState === this.store.gameState.get()) return;
+        if (!force && gameState === this.state.gameState.get()) return;
 
         if (gameState === GameState.Running) {
             this.level!.reset();
@@ -64,7 +64,7 @@ export class Context {
             this.ship!.remove(this);
         }
 
-        this.store.gameState.set(gameState);
+        this.state.gameState.set(gameState);
     }
 
     public update() {

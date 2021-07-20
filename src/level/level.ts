@@ -1,136 +1,121 @@
 import * as THREE from 'three';
+import * as detectCollisions from 'detect-collisions';
 import { Context } from 'context';
 
 const TILE_SIZE = 4.0;
 
 export enum Attribute {
+    None,
     FinishLine,
+}
+
+export interface RawTile {
+    top: number;
+    bottom: number;
+    mesh: THREE.Mesh,
+    collision: detectCollisions.Body,
 }
 
 export interface Tile {
     x: number;
     z: number;
     l: number;
-    a?: Attribute;
+    a: Attribute;
+    raw: RawTile;
 }
-
-export interface RawTile {
-    top: number;
-    bottom: number;
-    attribute?: Attribute;
-    mesh: THREE.Mesh,
-}
-
-export type RawTiles = Array<Array<RawTile>>;
 
 export class Level {
-    private data: RawTiles;
-    public tiles: Tile[];
+    public tiles: Tile[] = [];
 
     public async load(ctx: Context, name: string) {
         await this.setSkyBox(ctx);
 
         const mapString = await this.downloadMap(name);
         const rows = mapString.split('\n');
-        this.tiles = [];
 
         rows.forEach((row, z) => {
             for (let x = 0; x < row.length; x++) {
                 const l = parseInt(row[x]);
+
                 if (!isNaN(l) && l > 0.0) {
-                    this.tiles.push({ x, z, l });
+                    this.setTile(ctx, x, z, l, Attribute.None);
                 } else if (row[x] === 'F') {
-                    this.tiles.push({ x, z, l: 1, a: Attribute.FinishLine });
+                    this.setTile(ctx, x, z, 1, Attribute.FinishLine);
                 }
             }
         });
-
-        this.tiles.forEach(t => {
-            this.addTile(ctx, t);
-        });
-        debugger;
     }
 
     public clear(ctx: Context) {
-        this.data.forEach(t => {
-            t.forEach(t => {
-                ctx.scene.remove(t.mesh);
-            });
-        });
+        this.deleteTile(ctx, this.tiles[0].x, this.tiles[0].z);
+        if (this.tiles.length > 0) this.clear(ctx);
     }
 
     public update(ctx: Context) {
-        if (!this.data) return;
-
-        for (let z = 0; z < this.data.length; z++) {
-            for (let x = 0; x < 7; x++) {
-                if (this.data[z] && this.data[z][x] && this.data[z][x].mesh) {
-                    if (ctx.camera.position.distanceTo(this.data[z][x].mesh.position) < ctx.camera.far) {
-                        (this.data[z][x].mesh.material as THREE.MeshPhongMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(this.data[z][x].mesh.position)) / ctx.camera.far * 0.02);
-                    }
+        this.tiles.forEach(t => {
+            if (t.raw) {
+                if (ctx.camera.position.distanceTo(t.raw.mesh.position) < ctx.camera.far) {
+                    (t.raw.mesh.material as THREE.MeshPhongMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(t.raw.mesh.position)) / ctx.camera.far * 0.02);
                 }
             }
-        }
+        });
     }
 
     public reset() {
-        for (let z = 0; z < this.data.length; z++) {
-            for (let x = 0; x < 7; x++) {
-                if (this.data[z] && this.data[z][x] && this.data[z][x].mesh) {
-                    (this.data[z][x].mesh.material as THREE.MeshPhongMaterial).opacity = 0.0;
-                }
+        this.tiles.forEach(t => {
+            if (t.raw) {
+                (t.raw.mesh.material as THREE.MeshPhongMaterial).opacity = 0.0;
             }
-        }
+        });
     }
 
     public getTile(x: number, z: number) {
         const tx = x / TILE_SIZE + 3;
         const tz = (Math.abs(z - 4) - TILE_SIZE / 2) / 4;
 
-        if (this.data[tz] && this.data[tz][tx]) {
-            return this.data[tz][tx];
-        }
-
-        return null;
+        return this.tiles.find(t => t && t.x === tx && t.z === tz);
     }
 
-    public addTile(ctx: Context, t: Tile) {
-        const r = TILE_SIZE / 2.0;
+    public setTile(ctx: Context, x: number, z: number, l: number, a: Attribute) {
+        this.deleteTile(ctx, x, z);
 
-        const x = (t.x - 3.5) * TILE_SIZE + r;
-        const z = -t.z * TILE_SIZE + r;
+        if (l > 0.0) {
+            const r = TILE_SIZE / 2.0;
+            const world_x = (x - 3.5) * TILE_SIZE + r;
+            const world_z = -z * TILE_SIZE + r;
 
-        this.deleteTile(ctx, t.z, t.x);
-
-        if (t.l > 0.0) {
             const material = new THREE.MeshPhongMaterial({
-                color: t.a === Attribute.FinishLine ? new THREE.Color(0.8, 0.0, 0.0) : new THREE.Color(0.3, 0.3, 0.3),
+                color: a === Attribute.FinishLine ? new THREE.Color(0.8, 0.0, 0.0) : new THREE.Color(0.3, 0.3, 0.3),
                 transparent: true,
                 opacity: 0
             });
-            const h = t.l - 1;
-            const mesh = this.createMesh(x, h / 2.0 + 0.025, z, TILE_SIZE - 0.1, h + 0.05, TILE_SIZE - 0.1, material);
-            ctx.collision.createPolygon(x, z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
-            this.createTile(t.z, t.x, {
-                bottom: -0.03,
-                top: h,
-                mesh,
-                attribute: t.a,
+            const top = l - 1;
+            const mesh = this.createMesh(world_x, top / 2.0 + 0.025, world_z, TILE_SIZE - 0.1, top + 0.05, TILE_SIZE - 0.1, material);
+            const collision = ctx.collision.createPolygon(world_x, world_z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
+
+            this.tiles.push({
+                x, z, a, l,
+                raw: {
+                    bottom: -0.03,
+                    top,
+                    mesh,
+                    collision,
+                }
             });
             ctx.scene.add(mesh);
         }
     }
 
-    private createTile = (z: number, x: number, data: RawTile) => {
-        if (!this.data) this.data = [];
-        if (!this.data[z]) this.data[z] = [];
-        this.data[z][x] = data;
-    }
-
-    private deleteTile = (ctx: Context, z: number, x: number) => {
-        if (!this.data || !this.data[z] || !this.data[z][x]) return;
-        ctx.scene.remove(this.data[z][x].mesh);
-        delete this.data[z][x];
+    private deleteTile = (ctx: Context, x: number, z: number) => {
+        this.tiles.forEach((td, i) => {
+            if (td.x === x && td.z === z) {
+                if (td.raw) {
+                    ctx.scene.remove(td.raw.mesh);
+                    ctx.collision.remove(td.raw.collision);
+                    this.tiles.splice(i, 1);
+                }
+            }
+        });
     }
 
     private async downloadMap(map: string): Promise<string> {

@@ -85,11 +85,11 @@ export class Ship {
         for (const blocks of potentials) {
             if (this.boundingBox.collides(blocks, result)) {
                 const collider = ctx.level.getTile(result.b.x, result.b.y);
-                if (collider) {
-                    if (collider.attribute === Attribute.FinishLine && result.overlap > 1.2) {
+                if (collider && collider.raw) {
+                    if (collider.a === Attribute.FinishLine && result.overlap > 1.2) {
                         ctx.setGameState(GameState.Completed);
-                    } else if (collider.top > this.model.position.y - COLLIDER_Z_PAD && collider.bottom < this.model.position.y + COLLIDER_Z_PAD) {
-                        ground = Math.max(ground, collider.top);
+                    } else if (collider.raw.top > this.model.position.y - COLLIDER_Z_PAD && collider.raw.bottom < this.model.position.y + COLLIDER_Z_PAD) {
+                        ground = Math.max(ground, collider.raw.top);
                     }
                 }
             }

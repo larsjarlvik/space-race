@@ -18,7 +18,7 @@ const init = async () => {
     ctx.level = new Level();
     await ctx.level.load(ctx, 'level-1');
 
-    ctx.store.gameState.set(GameState.Paused);
+    ctx.state.gameState.set(GameState.Paused);
 };
 
 ctx.renderer.physicallyCorrectLights = true;
@@ -45,11 +45,11 @@ function animation(time: number) {
         ctx.setGameState(GameState.Running, true);
     }
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
-        ctx.store.mapMaking.set(!ctx.store.mapMaking.get());
+        ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
     }
 
     while (frameTime > 0.0) {
-        if (ctx.store.gameState.get() === GameState.Running) {
+        if (ctx.state.gameState.get() === GameState.Running) {
             ctx.ship!.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
             ctx.camera.position = ctx.ship ? ctx.ship.position : new THREE.Vector3();
@@ -62,7 +62,7 @@ function animation(time: number) {
 
     fps++;
     if (time - lastUpdate > 1000.0) {
-        ctx.store.fps.set(fps);
+        ctx.state.fps.set(fps);
         fps = 0;
         lastUpdate = time;
     }

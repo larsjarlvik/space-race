@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Fps } from './Fps';
 import { Loading } from './Screens/Loading';
 import { Paused } from './Screens/Paused';
-import { Level } from './Level/Overview';
+import { Overview } from './Level/Overview';
 
 interface Props {
     ctx: Context;
@@ -47,9 +47,9 @@ const getScreen = (gameState: GameState) => {
 };
 
 export const Main = React.memo((props: Props) => {
-    const state = useState(props.ctx.store);
+    const state = useState(props.ctx.state);
     const screen = getScreen(state.gameState.get());
-    const mapMaking = state.mapMaking.get() ? <Level ctx={props.ctx} /> : null;
+    const mapMaking = state.mapMaking.get() ? <Overview ctx={props.ctx} /> : null;
 
     return (
         <>

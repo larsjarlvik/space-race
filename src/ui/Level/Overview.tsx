@@ -1,9 +1,9 @@
 import { Context } from 'context';
-import { Attribute, Tile } from 'level/level';
+import { Attribute } from 'level/level';
 import * as React from 'react';
-import styled, { css } from 'styled-components';
-
-const MAX_LEVEL = 4;
+import styled from 'styled-components';
+import { Grid } from './Grid';
+import { Toolbar } from './Toolbar';
 
 const Container = styled.div`
     position: fixed;
@@ -33,90 +33,40 @@ const Scroll = styled.div`
     }
 `;
 
-const Row = styled.div`
-    display: flex;
-    flex-wrap: nowrap;
-`;
-
-const TileWrapper = styled.div`
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    line-height: 0;
-`;
-
-const Tile = styled.button<{ a?: Attribute }>`
-    width: 16px;
-    height: 16px;
-    border: none;
-    background: #fff;
-    opacity: 0;
-    border-radius: 0;
-
-    ${({ a }) => a === Attribute.FinishLine && css`
-        background: #c00;
-        opacity: 1 !important;
-    `}
-`;
-
-
 interface Props {
     ctx: Context;
 }
 
-export const Level = React.memo((props: Props) => {
-    const tiles: Tile[] = props.ctx.level?.tiles ?? [];
+export const Overview = React.memo((props: Props) => {
+    const scrollRef = React.createRef();
+    const [selectedTool, setSelectedTool] = React.useState<Attribute>();
+    const [tiles, setTiles] = React.useState(props.ctx.level?.tiles);
 
-    const setTile = (add: Tile) => {
-        const t = tiles.findIndex(t => t.x === add.x && t.z === add.z);
-        if (t) {
-            tiles[t] = add;
-            return;
+    React.useEffect(() => {
+        const elem = (scrollRef.current as HTMLDivElement);
+        if (elem) {
+            elem.scrollBy({ top: elem.scrollHeight });
         }
+    });
 
-        tiles.push(add);
+    const handleClearMap = () => {
+        props.ctx.level?.clear(props.ctx);
+        props.ctx.level?.setTile(props.ctx, 3, 0, 1, Attribute.None);
+        props.ctx.ship?.reset();
+        setTiles([...props.ctx.level?.tiles ?? []]);
     };
 
-    const clickTile = (e: React.MouseEvent<HTMLButtonElement>) => {
-        const tile = (e.target as HTMLButtonElement);
-
-        const x = parseInt(tile.dataset['tileX']!);
-        const z = parseInt(tile.dataset['tileZ']!);
-
-        let l = parseInt(tile.dataset['tileL'] ?? '0') + 1;
-        if (l > MAX_LEVEL) l = 0;
-
-        const mapTile = { x, z, l };
-        tile.dataset['tileL'] = mapTile.l.toString();
-        setTile(mapTile);
-        tile.style.opacity = `${mapTile.l / MAX_LEVEL}`;
-        props.ctx.level!.addTile(props.ctx, mapTile);
-
-        tile.blur();
-    };
-
-    const generateGrid = () => {
-        const rows: React.ReactNode[] = [];
-
-        for (let z = 150; z >= 0; z--) {
-            const tileNodes: React.ReactNode[] = [];
-            for (let x = 0; x < 7; x++) {
-                const t = tiles.find(t => t.x === x && t.z === z);
-                const style = t && { opacity: t.l / MAX_LEVEL };
-                tileNodes.push(<TileWrapper><Tile key={x} a={t?.a} onClick={clickTile} data-tile-z={z} data-tile-x={x} style={style} /></TileWrapper>);
-            }
-
-            rows.push(
-                <Row key={z}>{tileNodes}</Row>
-            );
-        }
-
-        return rows;
+    const handleSetTile = (x: number, z: number, l: number, a: Attribute) => {
+        props.ctx.level!.setTile(props.ctx, x, z, l, a);
+        setTiles([...props.ctx.level?.tiles ?? []]);
     };
 
     return (
-        <Container>
-            <Scroll>
-                {generateGrid()}
+        <Container onContextMenu={(e) => { e.preventDefault(); }}>
+            <Scroll ref={scrollRef as any}>
+                <Grid tiles={tiles ?? []} setTile={handleSetTile} selectedTool={selectedTool} />
             </Scroll>
+            <Toolbar selectedTool={selectedTool} onSelectTool={(t) => { setSelectedTool(t); }} onClearMap={handleClearMap} />
         </Container>
     );
 });
