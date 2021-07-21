@@ -34,6 +34,11 @@ export class Ship {
             loader.load('/models/ship.gltf', (gltf) => {
                 this.model = gltf.scene.getObjectByName('ship')!;
                 this.model.castShadow = true;
+
+                this.model.traverse((child: any) => {
+                    child.material.map.encoding = THREE.LinearEncoding;
+                });
+
                 resolve();
             });
         });

@@ -9,12 +9,12 @@ export class Camera {
     constructor(ctx: Context) {
         this.camera = new THREE.PerspectiveCamera(90.0, window.innerWidth / window.innerHeight, 0.5, 150);
 
-        this.ambient = new THREE.AmbientLight(new THREE.Color(2.0, 2.0, 2.0));
-        this.directional = new THREE.DirectionalLight(0xffffff, 7.0);
+        this.ambient = new THREE.AmbientLight(new THREE.Color(1.0, 1.0, 1.0), 0.5);
+        this.directional = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);
 
         this.directional.castShadow = true;
-        this.directional.shadow.mapSize.width = 2048;
-        this.directional.shadow.mapSize.height = 2048;
+        this.directional.shadow.mapSize.width = 4096;
+        this.directional.shadow.mapSize.height = 4096;
         this.directional.shadow.camera.near = 0.5;
         this.directional.shadow.camera.far = 100;
 

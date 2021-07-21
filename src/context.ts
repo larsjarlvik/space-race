@@ -26,6 +26,7 @@ export enum KeyState {
 
 export class Context {
     public renderer: THREE.WebGLRenderer;
+    public pmremGenerator: THREE.PMREMGenerator;
     public scene: THREE.Scene;
     public camera: Camera;
     public collision: Collisions;
@@ -37,9 +38,17 @@ export class Context {
 
     constructor() {
         this.scene = new THREE.Scene;
+
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer.physicallyCorrectLights = true;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.toneMappingExposure = 1;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+        this.pmremGenerator.compileEquirectangularShader();
+
         this.camera = new Camera(this);
         this.collision = new Collisions();
         this.keys = {};
@@ -58,10 +67,10 @@ export class Context {
         if (!force && gameState === this.state.gameState.get()) return;
 
         if (gameState === GameState.Running) {
-            this.level!.reset();
-            this.ship!.add(this);
+            if (this.level) this.level.reset();
+            if (this.ship) this.ship.add(this);
         } else {
-            this.ship!.remove(this);
+            if (this.ship) this.ship.remove(this);
         }
 
         this.state.gameState.set(gameState);

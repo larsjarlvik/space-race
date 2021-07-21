@@ -26,6 +26,15 @@ export interface Tile {
 
 export class Level {
     public tiles: Tile[] = [];
+    orm: THREE.Texture;
+    normal: THREE.Texture;
+    baseColor: THREE.Texture;
+
+    constructor() {
+        const loader = new THREE.TextureLoader();
+        this.orm = loader.load('/models/tile_occlusionRoughnessMetallic.png');
+        this.normal = loader.load('/models/tile_normal.png');
+    }
 
     public async load(ctx: Context, name: string) {
         await this.setSkyBox(ctx);
@@ -55,7 +64,7 @@ export class Level {
         this.tiles.forEach(t => {
             if (t.raw) {
                 if (ctx.camera.position.distanceTo(t.raw.mesh.position) < ctx.camera.far) {
-                    (t.raw.mesh.material as THREE.MeshPhongMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(t.raw.mesh.position)) / ctx.camera.far * 0.02);
+                    (t.raw.mesh.material as THREE.MeshPhysicalMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(t.raw.mesh.position)) / ctx.camera.far * 0.02);
                 }
             }
         });
@@ -64,7 +73,7 @@ export class Level {
     public reset() {
         this.tiles.forEach(t => {
             if (t.raw) {
-                (t.raw.mesh.material as THREE.MeshPhongMaterial).opacity = 0.0;
+                (t.raw.mesh.material as THREE.MeshPhysicalMaterial).opacity = 0.0;
             }
         });
     }
@@ -84,8 +93,12 @@ export class Level {
             const world_x = (x - 3.5) * TILE_SIZE + r;
             const world_z = -z * TILE_SIZE + r;
 
-            const material = new THREE.MeshPhongMaterial({
-                color: a === Attribute.FinishLine ? new THREE.Color(0.8, 0.0, 0.0) : new THREE.Color(0.3, 0.3, 0.3),
+            const material = new THREE.MeshPhysicalMaterial({
+                aoMap: this.orm,
+                roughnessMap: this.orm,
+                metalnessMap: this.orm,
+                normalMap: this.normal,
+                color: a === Attribute.FinishLine ? new THREE.Color(0.8, 0.0, 0.0) : new THREE.Color(0.8, 0.8, 0.8),
                 transparent: true,
                 opacity: 0
             });
@@ -128,7 +141,7 @@ export class Level {
 
     private createMesh(x: number, y: number, z: number, w: number, h: number, d: number, material: THREE.Material): THREE.Mesh {
         const geometry = new THREE.BoxGeometry(w, h, d);
-        geometry.computeVertexNormals();
+        geometry.computeTangents();
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.receiveShadow = true;

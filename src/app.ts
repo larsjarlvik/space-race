@@ -21,7 +21,7 @@ const init = async () => {
     ctx.state.gameState.set(GameState.Paused);
 };
 
-ctx.renderer.physicallyCorrectLights = true;
+
 ctx.renderer.setSize(window.innerWidth, window.innerHeight);
 ctx.renderer.setAnimationLoop(animation);
 
