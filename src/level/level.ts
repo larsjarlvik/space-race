@@ -37,8 +37,6 @@ export class Level {
     }
 
     public async load(ctx: Context, name: string) {
-        await this.setSkyBox(ctx);
-
         const mapString = await this.downloadMap(name);
         const rows = mapString.split('\n');
 
@@ -150,24 +148,5 @@ export class Level {
         mesh.renderOrder = -1;
 
         return mesh;
-    }
-
-    private async setSkyBox(ctx: Context): Promise<void> {
-        return new Promise((resolve) => {
-            const loader = new THREE.CubeTextureLoader();
-            loader.load([
-                '/skybox/right.jpg',
-                '/skybox/left.jpg',
-                '/skybox/top.jpg',
-                '/skybox/bottom.jpg',
-                '/skybox/front.jpg',
-                '/skybox/back.jpg',
-            ], (texture) => {
-                texture.mapping = THREE.CubeReflectionMapping;
-                ctx.scene.background = texture;
-                ctx.scene.environment = texture;
-                resolve();
-            });
-        });
     }
 }

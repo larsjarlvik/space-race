@@ -17,7 +17,7 @@ const LEAN = 4.0;
 
 export class Ship {
     private speed: THREE.Vector3;
-    private model: THREE.Object3D;
+    public model: THREE.Object3D;
     private boundingBox: Circle;
     private exhaust: Exhaust;
 
@@ -37,6 +37,8 @@ export class Ship {
 
                 this.model.traverse((child: any) => {
                     child.material.map.encoding = THREE.LinearEncoding;
+                    child.material.metalness = 1.0;
+                    child.material.roughness = 0.75;
                 });
 
                 resolve();
@@ -56,8 +58,6 @@ export class Ship {
     }
 
     public update(ctx: Context, time: number) {
-        if (!this || !ctx.level) return;
-
         if (ctx.keys['KeyW']) {
             this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * time;
         }
@@ -138,7 +138,7 @@ export class Ship {
     }
 
     get position(): THREE.Vector3 {
-        return this.model.position;
+        return this.model ? this.model.position : new THREE.Vector3();
     }
 }
 

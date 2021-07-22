@@ -1,7 +1,4 @@
-import * as THREE from 'three';
 import { Context, GameState, KeyState } from 'context';
-import { Level } from 'level/level';
-import { Ship } from 'ship/ship';
 import * as ui from 'ui/Index';
 
 const ctx = new Context();
@@ -12,10 +9,8 @@ let lastUpdate = 0;
 let lastFrame = 0;
 
 const init = async () => {
-    ctx.ship = new Ship(ctx);
+    await ctx.skybox.load(ctx, 'skybox');
     await ctx.ship.load();
-
-    ctx.level = new Level();
     await ctx.level.load(ctx, 'level-1');
 
     ctx.state.gameState.set(GameState.Paused);
@@ -50,10 +45,12 @@ function animation(time: number) {
 
     while (frameTime > 0.0) {
         if (ctx.state.gameState.get() === GameState.Running) {
-            ctx.ship!.update(ctx, FIXED_TIME_STEP);
+            ctx.ship.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
-            ctx.camera.position = ctx.ship ? ctx.ship.position : new THREE.Vector3();
-            ctx.level!.update(ctx);
+            ctx.camera.position = ctx.ship.position;
+            ctx.camera.directional.position.set(ctx.ship.position.x - 10.0, 10.0, ctx.ship.position.z - 8.0);
+            ctx.camera.directional.target = ctx.ship.model;
+            ctx.level.update(ctx);
         }
         frameTime -= FIXED_TIME_STEP;
     }
@@ -67,6 +64,7 @@ function animation(time: number) {
         lastUpdate = time;
     }
 
+    ctx.skybox.update(ctx);
     ctx.update();
 }
 

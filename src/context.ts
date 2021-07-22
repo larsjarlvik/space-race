@@ -3,6 +3,7 @@ import { Collisions } from 'detect-collisions';
 import { Level } from 'level/level';
 import { Ship } from 'ship/ship';
 import { Camera } from 'camera';
+import { Skybox } from 'skybox';
 import { createState, State as StateWrapper } from '@hookstate/core';
 
 export enum GameState {
@@ -26,14 +27,14 @@ export enum KeyState {
 
 export class Context {
     public renderer: THREE.WebGLRenderer;
-    public pmremGenerator: THREE.PMREMGenerator;
     public scene: THREE.Scene;
     public camera: Camera;
     public collision: Collisions;
+    public skybox: Skybox;
     public keys: { [key: string]: KeyState | undefined };
 
-    public ship?: Ship;
-    public level?: Level;
+    public ship: Ship;
+    public level: Level;
     public state: StateWrapper<State>;
 
     constructor() {
@@ -45,12 +46,14 @@ export class Context {
         this.renderer.toneMappingExposure = 1;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.collision = new Collisions();
 
-        this.pmremGenerator = new THREE.PMREMGenerator(this.renderer);
-        this.pmremGenerator.compileEquirectangularShader();
 
         this.camera = new Camera(this);
-        this.collision = new Collisions();
+        this.skybox = new Skybox();
+        this.ship = new Ship(this);
+        this.level = new Level();
+
         this.keys = {};
         this.state = createState({
             gameState: GameState.Loading,
