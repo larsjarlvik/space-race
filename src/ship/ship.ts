@@ -123,7 +123,7 @@ export class Ship {
         this.model.rotation.z = -this.speed.x * LEAN * 0.7;
         this.model.rotation.y = -this.speed.x * LEAN;
 
-        this.exhaust.update(this.model.position, this.model.rotation, this.speed.z, time);
+        this.exhaust.update(this.model.position, this.model.rotation, Math.max(Math.abs(this.speed.x * 0.3), this.speed.z));
     }
 
     public add(ctx: Context) {

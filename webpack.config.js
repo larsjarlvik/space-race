@@ -2,10 +2,10 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
-module.exports = {
+module.exports = (env, argv) => ({
     entry: './src/app.ts',
-    mode: 'development',
     module: {
         rules: [
             {
@@ -26,19 +26,21 @@ module.exports = {
         ],
     },
     output: {
-        filename: 'app.js',
+        filename: 'app.[fullhash].js',
         path: path.resolve(__dirname, 'dist'),
     },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     plugins: [
         new HtmlWebpackPlugin({
-            title: 'Development',
             template: path.resolve(__dirname, './src/index.html'),
             filename: 'index.html',
         }),
         new CleanWebpackPlugin(),
+        new CopyPlugin({ patterns: [
+            { from: 'static', to: '.' },
+        ]}),
         new webpack.DefinePlugin({
-            'process.env': { NODE_ENV: JSON.stringify('development') }
+            'process.env': { NODE_ENV: JSON.stringify(argv.mode) }
         })
     ],
     devServer: {
@@ -49,4 +51,9 @@ module.exports = {
         hot: true,
         port: 8080,
     },
-};
+    performance: {
+        hints: false,
+        maxEntrypointSize: 1024 * 1024,
+        maxAssetSize: 1024 * 512,
+    },
+});

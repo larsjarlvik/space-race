@@ -34,7 +34,7 @@ function animation(time: number) {
     frameTime += (time - lastFrame) / 1000.0;
     lastFrame = time;
 
-    if (frameTime > 500.0) frameTime = 500.0;
+    if (frameTime > 5.0) frameTime = 5.0;
 
     if (ctx.keys['KeyR'] === KeyState.Pressed) {
         ctx.setGameState(GameState.Running, true);

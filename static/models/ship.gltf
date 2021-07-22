@@ -22,26 +22,30 @@
         {
             "doubleSided" : true,
             "emissiveFactor" : [
-                0,
-                0,
-                0
+                1,
+                1,
+                1
             ],
-            "name" : "ship",
-            "normalTexture" : {
+            "emissiveTexture" : {
                 "index" : 0,
                 "texCoord" : 0
             },
-            "occlusionTexture" : {
+            "name" : "ship",
+            "normalTexture" : {
                 "index" : 1,
+                "texCoord" : 0
+            },
+            "occlusionTexture" : {
+                "index" : 2,
                 "texCoord" : 0
             },
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
-                    "index" : 2,
+                    "index" : 3,
                     "texCoord" : 0
                 },
                 "metallicRoughnessTexture" : {
-                    "index" : 1,
+                    "index" : 2,
                     "texCoord" : 0
                 }
             }
@@ -74,13 +78,21 @@
         },
         {
             "source" : 2
+        },
+        {
+            "source" : 3
         }
     ],
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "ship_normal",
-            "uri" : "ship_normal.png"
+            "name" : "ship_emissive",
+            "uri" : "ship_emissive.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "ship_Normal",
+            "uri" : "ship_Normal.png"
         },
         {
             "mimeType" : "image/png",

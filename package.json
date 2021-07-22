@@ -1,40 +1,40 @@
 {
-  "name": "ghwy",
+  "name": "space-race",
   "version": "1.0.0",
   "description": "",
   "private": true,
   "scripts": {
-    "start": "webpack serve",
-    "build": "webpack",
+    "start": "webpack serve --mode=development",
+    "build": "webpack --mode=production",
     "lint": "node node_modules/eslint/bin/eslint.js ."
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/webpack-env": "^1.16.2",
-    "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@typescript-eslint/parser": "^4.28.3",
-    "clean-webpack-plugin": "^4.0.0-alpha.0",
-    "copy-webpack-plugin": "^9.0.1",
-    "eslint": "^7.30.0",
-    "html-webpack-plugin": "^5.3.2",
-    "svg-inline-loader": "^0.8.2",
-    "ts-loader": "^9.2.3",
-    "typescript": "^4.3.5",
-    "webpack": "^5.4.0",
-    "webpack-cli": "^4.2.0",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "eslint": "^7.30.0"
   },
   "dependencies": {
+    "@types/webpack-env": "^1.16.2",
     "@hookstate/core": "^3.0.8",
     "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.9",
     "@types/styled-components": "^5.1.11",
     "@types/three": "^0.130.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
+    "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "copy-webpack-plugin": "^9.0.1",
     "detect-collisions": "^2.5.4",
+    "html-webpack-plugin": "^5.3.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "styled-components": "^5.3.0",
-    "three": "^0.130.1"
+    "svg-inline-loader": "^0.8.2",
+    "three": "^0.130.1",
+    "ts-loader": "^9.2.3",
+    "typescript": "^4.3.5",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0"
   }
 }
