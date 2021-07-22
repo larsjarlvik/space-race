@@ -51,6 +51,7 @@ function animation(time: number) {
             ctx.camera.directional.position.set(ctx.ship.position.x - 10.0, 10.0, ctx.ship.position.z - 8.0);
             ctx.camera.directional.target = ctx.ship.model;
             ctx.level.update(ctx);
+            ctx.skybox.update(ctx);
         }
         frameTime -= FIXED_TIME_STEP;
     }
@@ -64,7 +65,6 @@ function animation(time: number) {
         lastUpdate = time;
     }
 
-    ctx.skybox.update(ctx);
     ctx.update();
 }
 
