@@ -45,16 +45,24 @@ interface Props {
 }
 
 let mouseDown: number | undefined;
+let lastTile: HTMLButtonElement | undefined;
 
 export const Grid = ((props: Props) => {
     const handleMouse = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (!mouseDown) return;
 
         const tile = (e.target as HTMLButtonElement);
+        if (lastTile) console.log(parseInt(tile.dataset.tileX!), parseInt(lastTile.dataset.tileX!));
+        if (lastTile && (
+            parseInt(tile.dataset.tileX!) === parseInt(lastTile.dataset.tileX!) &&
+            parseInt(tile.dataset.tileZ!) === parseInt(lastTile.dataset.tileZ!))
+        ) return;
+
+        lastTile = tile;
 
         const x = parseInt(tile.dataset.tileX!);
         const z = parseInt(tile.dataset.tileZ!);
-        let l = parseInt(tile.dataset.tileL ?? '0');
+        let l = parseInt(tile.dataset.tileL ?? '-1');
         let a = tile.dataset.tileA ? parseInt(tile.dataset.tileA) as Attribute : Attribute.None;
 
         if (props.selectedTool === undefined) {
@@ -66,7 +74,6 @@ export const Grid = ((props: Props) => {
         }
 
         props.setTile(x, z, l, a);
-        tile.blur();
     };
 
     const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -81,6 +88,7 @@ export const Grid = ((props: Props) => {
 
     const handleMouseReset = () => {
         mouseDown = undefined;
+        lastTile = undefined;
     };
 
     const generateGrid = () => {

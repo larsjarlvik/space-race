@@ -65,17 +65,17 @@ export class Ship {
             this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * pos.z * time;
             this.speed.x += ACCELERATION * pos.x * time;
         } else {
-            if (ctx.keys['KeyW']) {
+            if (ctx.keys['KeyW'] || ctx.keys['ArrowUp']) {
                 this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * time;
             }
-            if (ctx.keys['KeyS']) {
+            if (ctx.keys['KeyS'] || ctx.keys['ArrowDown']) {
                 this.speed.z -= clamp(this.speed.z, 1.0, 5.0) * 0.3 * ACCELERATION * time;
             }
 
-            if (ctx.keys['KeyD']) {
+            if (ctx.keys['KeyD'] || ctx.keys['ArrowRight']) {
                 this.speed.x += ACCELERATION * time;
             }
-            if (ctx.keys['KeyA']) {
+            if (ctx.keys['KeyA']|| ctx.keys['ArrowLeft']) {
                 this.speed.x -= ACCELERATION * time;
             }
         }
