@@ -5,6 +5,7 @@ import styled from 'styled-components';
 const Button = styled.button`
     display: block;
     margin-bottom: 12px;
+    text-align: left;
 
     &:hover {
         span {
@@ -14,7 +15,7 @@ const Button = styled.button`
 
     span {
         display: inline-block;
-        width: 170px;
+        width: 230px;
     }
 `;
 
@@ -34,11 +35,16 @@ export const Paused = React.memo((props: Props) => {
         props.ctx.state.scrollMap.set(true);
     };
 
+    const handleFullScreen = () => {
+        props.ctx.toggleFullscreen();
+    };
+
     return (
         <section>
             <h2>{props.displayText}</h2>
             <Button onClick={handleStart}><span>Start Game</span><kbd>R</kbd></Button>
             <Button onClick={handleMap}><span>Create Map</span><kbd>M</kbd></Button>
+            <Button onClick={handleFullScreen}><span>Toggle Fullscreen</span><kbd>F</kbd></Button>
         </section>
     );
 });

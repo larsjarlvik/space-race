@@ -115,6 +115,14 @@ export class Context {
         });
     }
 
+    public toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.body.requestFullscreen();
+        } else {
+            document.exitFullscreen();
+        }
+    }
+
     private resize() {
         this.camera.resize();
         this.renderer.setSize(window.innerWidth, window.innerHeight);

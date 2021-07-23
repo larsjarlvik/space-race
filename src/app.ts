@@ -13,7 +13,6 @@ const init = async () => {
     await ctx.ship.load();
     await ctx.level.load(ctx, 'level-1');
 
-
     ctx.state.gameState.set(GameState.Paused);
 };
 
@@ -43,6 +42,12 @@ function animation(time: number) {
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
         ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
         ctx.state.scrollMap.set(true);
+    }
+    if (ctx.keys['KeyR'] === KeyState.Pressed) {
+        ctx.setGameState(GameState.Running, true);
+    }
+    if (ctx.keys['KeyF'] === KeyState.Pressed) {
+        ctx.toggleFullscreen();
     }
 
     while (frameTime > 0.0) {
