@@ -13,6 +13,7 @@ const init = async () => {
     await ctx.ship.load();
     await ctx.level.load(ctx, 'level-1');
 
+
     ctx.state.gameState.set(GameState.Paused);
 };
 

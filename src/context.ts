@@ -5,6 +5,7 @@ import { Ship } from 'ship/ship';
 import { Camera } from 'camera';
 import { Skybox } from 'skybox';
 import { createState, State as StateWrapper } from '@hookstate/core';
+import * as nipple from 'nipplejs';
 
 export enum GameState {
     Loading,
@@ -37,6 +38,8 @@ export class Context {
     public ship: Ship;
     public level: Level;
     public state: StateWrapper<State>;
+    public nipple: nipple.JoystickManager;
+    public nippleId: number;
 
     constructor() {
         this.scene = new THREE.Scene;
@@ -65,6 +68,23 @@ export class Context {
         window.addEventListener('resize', this.resize.bind(this));
         window.addEventListener('keydown', this.keyDown.bind(this));
         window.addEventListener('keyup', this.keyUp.bind(this));
+
+        document.getElementById('jump')?.addEventListener('touchstart', () => {
+            this.keys['Space'] = KeyState.Pressed;
+        });
+        document.getElementById('jump')?.addEventListener('touchend', () => {
+            this.keys['Space'] = undefined;
+        });
+
+        this.nipple = nipple.create({
+            zone: document.getElementById('nipple')!,
+            mode: 'dynamic',
+            color: 'white'
+        });
+
+        this.nipple.on('start', (data) => {
+            this.nippleId = data.target.nipples[0].identifier;
+        });
     }
 
     public setGameState(gameState: GameState, force = false) {

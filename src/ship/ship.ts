@@ -58,19 +58,28 @@ export class Ship {
     }
 
     public update(ctx: Context, time: number) {
-        if (ctx.keys['KeyW']) {
-            this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * time;
-        }
-        if (ctx.keys['KeyS']) {
-            this.speed.z -= clamp(this.speed.z, 1.0, 5.0) * 0.3 * ACCELERATION * time;
+        const joystick = ctx.nipple.get(ctx.nippleId);
+        if (joystick && joystick.frontPosition) {
+            const pos = { x: joystick.frontPosition.x / 50.0, z: -joystick.frontPosition.y / 50.0 };
+
+            this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * pos.z * time;
+            this.speed.x += ACCELERATION * pos.x * time;
+        } else {
+            if (ctx.keys['KeyW']) {
+                this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * time;
+            }
+            if (ctx.keys['KeyS']) {
+                this.speed.z -= clamp(this.speed.z, 1.0, 5.0) * 0.3 * ACCELERATION * time;
+            }
+
+            if (ctx.keys['KeyD']) {
+                this.speed.x += ACCELERATION * time;
+            }
+            if (ctx.keys['KeyA']) {
+                this.speed.x -= ACCELERATION * time;
+            }
         }
 
-        if (ctx.keys['KeyD']) {
-            this.speed.x += ACCELERATION * time;
-        }
-        if (ctx.keys['KeyA']) {
-            this.speed.x -= ACCELERATION * time;
-        }
 
         this.speed.x = clamp(this.speed.x, -MAX_SPEED_X, MAX_SPEED_X);
         this.speed.z = clamp(this.speed.z, -MAX_SPEED_Z, MAX_SPEED_Z);
