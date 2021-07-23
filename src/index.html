@@ -3,6 +3,9 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo:wght@300;400;500&display=swap" rel="stylesheet">
     <script>
         window.process = {}
     </script>
@@ -13,10 +16,18 @@
             overflow: hidden;
             padding: 0;
             margin: 0;
-            font: 24px Arial;
-            color: #fff;
             text-shadow: 2px 2px 4px rgba(0.0, 0.0, 0.0, 0.5);
             background: #000;
+        }
+
+        html, body, button {
+            font: 400 22px 'Exo', sans-serif;
+            color: #fff;
+        }
+
+        button {
+            background: transparent;
+            border: none;
         }
 
         #fps {
@@ -36,6 +47,37 @@
             display: flex;
             justify-content: stretch;
             align-items: stretch;
+        }
+
+        .btn ,
+        kbd {
+            background: transparent;
+            position: relative;
+            display: inline-flex;
+            align-self: center;
+            font: 300 14px 'Exo', sans-serif;
+            border: 1px solid #a9a9a9;
+            justify-content: center;
+            align-items: center;
+            border-radius: 2px;
+        }
+
+        kbd {
+            width: 32px;
+            height: 27px;
+            padding-bottom: 5px;
+            margin-left: 5px;
+            align-items: flex-end;
+        }
+
+        kbd::after {
+            content: ' ';
+            border: 1px solid #a9a9a9;
+            position: absolute;
+            top: 100%;
+            height: 2px;
+            left: -1px;
+            right: -1px;
         }
     </style>
 </head>

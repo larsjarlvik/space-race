@@ -17,6 +17,7 @@ export enum GameState {
 export interface State {
     gameState: GameState;
     mapMaking: boolean;
+    scrollMap: boolean;
     fps: number;
 }
 

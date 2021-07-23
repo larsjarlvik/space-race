@@ -41,6 +41,7 @@ function animation(time: number) {
     }
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
         ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
+        ctx.state.scrollMap.set(true);
     }
 
     while (frameTime > 0.0) {

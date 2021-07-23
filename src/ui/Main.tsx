@@ -11,8 +11,6 @@ interface Props {
     ctx: Context;
 }
 
-
-
 const Backdrop = styled.main<{ show: boolean }>`
     opacity: 0;
     pointer-events: none;
@@ -31,16 +29,16 @@ const Backdrop = styled.main<{ show: boolean }>`
     `}
 `;
 
-const getScreen = (gameState: GameState) => {
+const getScreen = (ctx: Context, gameState: GameState) => {
     switch (gameState) {
         case GameState.Loading:
             return <Loading />;
         case GameState.Paused:
-            return <Paused displayText="" />;
+            return <Paused ctx={ctx} displayText="" />;
         case GameState.Completed:
-            return <Paused displayText="Level Complete!" />;
+            return <Paused ctx={ctx} displayText="Level Complete!" />;
         case GameState.Crashed:
-            return <Paused displayText="Crashed!" />;
+            return <Paused ctx={ctx} displayText="Crashed!" />;
     }
 
     return null;
@@ -48,7 +46,7 @@ const getScreen = (gameState: GameState) => {
 
 export const Main = React.memo((props: Props) => {
     const state = useState(props.ctx.state);
-    const screen = getScreen(state.gameState.get());
+    const screen = getScreen(props.ctx, state.gameState.get());
     const mapMaking = state.mapMaking.get() ? <Overview ctx={props.ctx} /> : null;
 
     return (

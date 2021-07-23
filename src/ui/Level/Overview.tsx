@@ -10,9 +10,9 @@ const Container = styled.div`
     top: 0;
     right: 0;
     bottom: 0;
-    padding: 20px 20px;
     display: flex;
-    background: rgba(0, 0, 0, 0.7);
+    background: #eee;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
 `;
 
 const Scroll = styled.div`
@@ -44,8 +44,9 @@ export const Overview = React.memo((props: Props) => {
 
     React.useEffect(() => {
         const elem = (scrollRef.current as HTMLDivElement);
-        if (elem) {
+        if (elem && props.ctx.state.scrollMap.get()) {
             elem.scrollBy({ top: elem.scrollHeight });
+            props.ctx.state.scrollMap.set(false);
         }
     });
 

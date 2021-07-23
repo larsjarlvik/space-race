@@ -10,16 +10,16 @@ import { Attribute } from 'level/level';
 const Container = styled.aside`
     display: flex;
     flex-direction: column;
+    background: #222;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+    padding: 10px;
+    z-index: 100;
 `;
 
 const Button = styled.button<{ isSelected: boolean }>`
-    width: 26px;
-    height: 26px;
-    border: none;
-    background-color: transparent;
-    margin: 0 0 6px 6px;
-    padding: 4px;
-    border: 1px solid #ddd;
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
 
     * {
         fill: #ddd !important;
@@ -40,7 +40,7 @@ const Button = styled.button<{ isSelected: boolean }>`
 `;
 
 const Separator = styled.div`
-    margin: 6px 0 12px 6px;
+    margin: 6px 0 12px;
     height: 1px;
     background-color: #ddd;
 `;
@@ -64,7 +64,7 @@ interface Props {
 
 export const Toolbar = React.memo((props: Props) => {
     const items = toolbarItems.map((t) =>
-        <Button key={t.icon} isSelected={t.attribute === props.selectedTool} onClick={() => props.onSelectTool(t.attribute)} dangerouslySetInnerHTML={{ __html: t.icon }}></Button>
+        <Button key={t.icon} className="btn" isSelected={t.attribute === props.selectedTool} onClick={() => props.onSelectTool(t.attribute)} dangerouslySetInnerHTML={{ __html: t.icon }}></Button>
     );
 
     const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -76,7 +76,7 @@ export const Toolbar = React.memo((props: Props) => {
         <Container>
             {items}
             <Separator />
-            <Button onClick={handleClear} dangerouslySetInnerHTML={{ __html: clear }} isSelected={false}></Button>
+            <Button onClick={handleClear} className="btn" dangerouslySetInnerHTML={{ __html: clear }} isSelected={false}></Button>
         </Container>
     );
 });

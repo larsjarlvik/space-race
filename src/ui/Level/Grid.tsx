@@ -4,13 +4,20 @@ import styled, { css } from 'styled-components';
 
 const MAX_LEVEL = 4;
 
+const Container = styled.div`
+    margin: 12px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
 const Row = styled.div`
     display: flex;
     flex-wrap: nowrap;
 `;
 
 const TileWrapper = styled.div`
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
     line-height: 0;
 `;
 
@@ -18,7 +25,7 @@ const Tile = styled.button<{ attribute?: Attribute, opacity: number }>`
     width: 16px;
     height: 16px;
     border: none;
-    background: #fff;
+    background: #222;
     border-radius: 0;
 
     ${({ opacity }) => css`
@@ -26,8 +33,7 @@ const Tile = styled.button<{ attribute?: Attribute, opacity: number }>`
     `};
 
     ${({ attribute }) => attribute === Attribute.FinishLine && css`
-        background: #c00;
-        opacity: 1;
+        background: #f00;
     `}
 `;
 
@@ -108,8 +114,8 @@ export const Grid = ((props: Props) => {
     };
 
     return (
-        <div onMouseUp={handleMouseReset} onMouseLeave={handleMouseReset}>
+        <Container onMouseUp={handleMouseReset} onMouseLeave={handleMouseReset}>
             {generateGrid()}
-        </div>
+        </Container>
     );
 });
