@@ -68,7 +68,12 @@ export const Overview = React.memo((props: Props) => {
             <Scroll ref={scrollRef as any}>
                 <Grid tiles={tiles ?? []} setTile={handleSetTile} selectedTool={selectedTool} />
             </Scroll>
-            <Toolbar selectedTool={selectedTool} onSelectTool={(t) => { setSelectedTool(t); }} onClearMap={handleClearMap} />
+            <Toolbar
+                selectedTool={selectedTool}
+                onSelectTool={(t) => { setSelectedTool(t); }}
+                onClose={() => { props.ctx.state.mapMaking.set(false); }}
+                onClearMap={handleClearMap}
+            />
         </Container>
     );
 });

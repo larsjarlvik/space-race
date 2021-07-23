@@ -35,8 +35,9 @@ export const Paused = React.memo((props: Props) => {
         props.ctx.state.scrollMap.set(true);
     };
 
-    const handleFullScreen = () => {
+    const handleFullScreen = (e: React.MouseEvent<HTMLButtonElement>) => {
         props.ctx.toggleFullscreen();
+        (e.target as any).blur();
     };
 
     return (

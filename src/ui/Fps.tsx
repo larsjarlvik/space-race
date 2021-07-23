@@ -6,6 +6,7 @@ const Container = styled.div`
     top: 12px;
     left: 12px;
     font-size: 16px;
+    z-index: 1000;
 `;
 
 interface Props {

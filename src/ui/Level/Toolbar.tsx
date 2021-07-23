@@ -5,6 +5,7 @@ import upDown from 'icons/up-down.svg';
 import noAttribute from 'icons/no-attribute.svg';
 import finish from 'icons/finish.svg';
 import clear from 'icons/clear.svg';
+import arrowRight from 'icons/arrow-right.svg';
 import { Attribute } from 'level/level';
 
 const Container = styled.aside`
@@ -16,7 +17,7 @@ const Container = styled.aside`
     z-index: 100;
 `;
 
-const Button = styled.button<{ isSelected: boolean }>`
+const Button = styled.button<{ isSelected: boolean, bottom?: boolean }>`
     width: 28px;
     height: 28px;
     margin-bottom: 6px;
@@ -36,6 +37,10 @@ const Button = styled.button<{ isSelected: boolean }>`
 
     ${({ isSelected }) => isSelected && css`
         background: rgba(255, 0, 0, 0.7);
+    `}
+
+    ${({ bottom }) => bottom && css`
+        margin-top: auto;
     `}
 `;
 
@@ -60,6 +65,7 @@ interface Props {
     selectedTool: Attribute | undefined;
     onSelectTool: (tool?: Attribute) => void;
     onClearMap: () => void;
+    onClose: () => void;
 }
 
 export const Toolbar = React.memo((props: Props) => {
@@ -72,11 +78,17 @@ export const Toolbar = React.memo((props: Props) => {
         (e.target as any).blur();
     };
 
+    const handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
+        props.onClose();
+        (e.target as any).blur();
+    };
+
     return (
         <Container>
             {items}
             <Separator />
             <Button onClick={handleClear} className="btn" dangerouslySetInnerHTML={{ __html: clear }} isSelected={false}></Button>
+            <Button onClick={handleClose} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: arrowRight }} isSelected={false}></Button>
         </Container>
     );
 });

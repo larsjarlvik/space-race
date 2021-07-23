@@ -6,6 +6,8 @@ import { Fps } from './Fps';
 import { Loading } from './Screens/Loading';
 import { Paused } from './Screens/Paused';
 import { Overview } from './Level/Overview';
+import ReactDOM from 'react-dom';
+import { Menu } from './Menu';
 
 interface Props {
     ctx: Context;
@@ -22,7 +24,7 @@ const Backdrop = styled.main<{ show: boolean }>`
     justify-content: center;
     text-align: center;
     backdrop-filter: blur(8px);
-    z-index: 1000;
+    z-index: 100;
 
     ${({ show }) => show && css`
         opacity: 1;
@@ -48,7 +50,15 @@ const getScreen = (ctx: Context, gameState: GameState) => {
 export const Main = React.memo((props: Props) => {
     const state = useState(props.ctx.state);
     const screen = getScreen(props.ctx, state.gameState.get());
-    const mapMaking = state.mapMaking.get() ? <Overview ctx={props.ctx} /> : null;
+    const mapMaking = state.mapMaking.get() ?
+        ReactDOM.createPortal(<Overview ctx={props.ctx} />, document.getElementById('map')!) : null;
+
+    const handleToggleMenu = () => {
+        props.ctx.state.gameState.set(GameState.Paused);
+    };
+
+    const menu = state.gameState.get() === GameState.Running ?
+        ReactDOM.createPortal(<Menu onClick={handleToggleMenu} />, document.getElementById('map')!) : null;
 
     return (
         <>
@@ -57,6 +67,7 @@ export const Main = React.memo((props: Props) => {
             </Backdrop>
             <Fps fps={state.fps.get()} />
             {mapMaking}
+            {menu}
         </>
     );
 });
