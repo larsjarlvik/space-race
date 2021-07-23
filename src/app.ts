@@ -1,6 +1,10 @@
 import { Context, GameState, KeyState } from 'context';
 import * as ui from 'ui/Index';
 
+window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js');
+});
+
 const ctx = new Context();
 ui.init(ctx);
 
