@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as detectCollisions from 'detect-collisions';
-import { Context } from 'context';
+import { Context, GameState } from 'context';
 
 const TILE_SIZE = 4.0;
 
@@ -68,10 +68,19 @@ export class Level {
         });
     }
 
-    public reset() {
+    public show(ctx: Context) {
         this.tiles.forEach(t => {
             if (t.raw) {
+                ctx.scene.add(t.raw.mesh);
                 (t.raw.mesh.material as THREE.MeshPhysicalMaterial).opacity = 0.0;
+            }
+        });
+    }
+
+    public reset(ctx: Context) {
+        this.tiles.forEach(t => {
+            if (t.raw) {
+                ctx.scene.remove(t.raw.mesh);
             }
         });
     }
@@ -113,7 +122,10 @@ export class Level {
                     collision,
                 }
             });
-            ctx.scene.add(mesh);
+
+            if (ctx.state.gameState.get() === GameState.Running) {
+                ctx.scene.add(mesh);
+            }
         }
     }
 

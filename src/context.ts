@@ -96,14 +96,17 @@ export class Context {
         if (!force && gameState === this.state.gameState.get()) return;
 
         if (gameState === GameState.Running) {
-            if (this.level) this.level.reset();
+            if (this.level) this.level.show(this);
             if (this.ship) this.ship.add(this);
             this.nippleArea.classList.add('show');
             this.jumpArea.classList.add('show');
+            document.getElementById('ui')?.classList.add('running');
         } else {
             if (this.ship) this.ship.remove(this);
             this.nippleArea.classList.remove('show');
             this.jumpArea.classList.remove('show');
+            if (this.level) this.level.reset(this);
+            document.getElementById('ui')?.classList.remove('running');
         }
 
         this.state.gameState.set(gameState);

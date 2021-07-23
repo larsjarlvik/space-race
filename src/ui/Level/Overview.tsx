@@ -13,6 +13,7 @@ const Container = styled.div`
     display: flex;
     background: #eee;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 `;
 
 const Scroll = styled.div`

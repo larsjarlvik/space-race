@@ -70,6 +70,7 @@ function animation(time: number) {
         ctx.state.fps.set(fps);
         fps = 0;
         lastUpdate = time;
+        console.log(ctx.renderer.info.render.calls);
     }
 
     ctx.update();
