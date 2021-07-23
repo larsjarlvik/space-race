@@ -1,7 +1,7 @@
 {
     "short_name": "Space Race",
     "name": "Space Racing!",
-    "display": "standalone",
+    "display": "fullscreen",
     "start_url": "/",
     "background_color": "#222",
     "theme_color": "#222",
