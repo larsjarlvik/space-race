@@ -40,6 +40,8 @@ export class Context {
     public state: StateWrapper<State>;
     public nipple: nipple.JoystickManager;
     public nippleId: number;
+    nippleArea: HTMLElement;
+    jumpArea: HTMLElement;
 
     constructor() {
         this.scene = new THREE.Scene;
@@ -58,6 +60,9 @@ export class Context {
         this.ship = new Ship(this);
         this.level = new Level();
 
+        this.nippleArea = document.getElementById('nipple')!;
+        this.jumpArea = document.getElementById('jump')!;
+
         this.keys = {};
         this.state = createState({
             gameState: GameState.Loading,
@@ -69,17 +74,17 @@ export class Context {
         window.addEventListener('keydown', this.keyDown.bind(this));
         window.addEventListener('keyup', this.keyUp.bind(this));
 
-        document.getElementById('jump')?.addEventListener('touchstart', () => {
+        this.jumpArea.addEventListener('touchstart', () => {
             this.keys['Space'] = KeyState.Pressed;
         });
-        document.getElementById('jump')?.addEventListener('touchend', () => {
+        this.jumpArea.addEventListener('touchend', () => {
             this.keys['Space'] = undefined;
         });
 
         this.nipple = nipple.create({
-            zone: document.getElementById('nipple')!,
+            zone: this.nippleArea,
             mode: 'dynamic',
-            color: 'white'
+            color: 'white',
         });
 
         this.nipple.on('start', (data) => {
@@ -93,8 +98,12 @@ export class Context {
         if (gameState === GameState.Running) {
             if (this.level) this.level.reset();
             if (this.ship) this.ship.add(this);
+            this.nippleArea.classList.add('show');
+            this.jumpArea.classList.add('show');
         } else {
             if (this.ship) this.ship.remove(this);
+            this.nippleArea.classList.remove('show');
+            this.jumpArea.classList.remove('show');
         }
 
         this.state.gameState.set(gameState);

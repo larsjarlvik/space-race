@@ -22,6 +22,7 @@ const Backdrop = styled.main<{ show: boolean }>`
     justify-content: center;
     text-align: center;
     backdrop-filter: blur(8px);
+    z-index: 1000;
 
     ${({ show }) => show && css`
         opacity: 1;
