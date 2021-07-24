@@ -51,8 +51,11 @@ module.exports = (env, argv) => ({
         open: false,
         compress: true,
         hot: true,
-        port: 8080,
+        port: process.env.PORT,
         host: '0.0.0.0',
+        proxy: {
+            '/api': 'http://localhost:3000/',
+        },
     },
     performance: {
         hints: false,

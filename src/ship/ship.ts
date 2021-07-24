@@ -75,7 +75,7 @@ export class Ship {
             if (ctx.keys['KeyD'] || ctx.keys['ArrowRight']) {
                 this.speed.x += ACCELERATION * time;
             }
-            if (ctx.keys['KeyA']|| ctx.keys['ArrowLeft']) {
+            if (ctx.keys['KeyA'] || ctx.keys['ArrowLeft']) {
                 this.speed.x -= ACCELERATION * time;
             }
         }
@@ -99,8 +99,8 @@ export class Ship {
         for (const blocks of potentials) {
             if (this.boundingBox.collides(blocks, result)) {
                 const collider = ctx.level.getTile(result.b.x, result.b.y);
-                if (collider && collider.raw) {
-                    if (collider.a === Attribute.FinishLine && result.overlap > 1.2) {
+                if (collider) {
+                    if (collider.tile.a === Attribute.FinishLine && result.overlap > 1.2) {
                         ctx.setGameState(GameState.Completed);
                     } else if (collider.raw.top > this.model.position.y - COLLIDER_Z_PAD && collider.raw.bottom < this.model.position.y + COLLIDER_Z_PAD) {
                         ground = Math.max(ground, collider.raw.top);

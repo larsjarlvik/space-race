@@ -63,6 +63,18 @@ export const Overview = React.memo((props: Props) => {
         setTiles([...props.ctx.level?.tiles ?? []]);
     };
 
+    const handleSave = () => {
+        const mapName = prompt('Name:');
+        fetch(`/api/map?m=${mapName}`, {
+            method: 'POST',
+            body: JSON.stringify(props.ctx.level.tiles)
+        }).then((response) => {
+            response.text().then((text) => {
+                alert(text);
+            });
+        });
+    };
+
     return (
         <Container onContextMenu={(e) => { e.preventDefault(); }}>
             <Scroll ref={scrollRef as any}>
@@ -73,6 +85,7 @@ export const Overview = React.memo((props: Props) => {
                 onSelectTool={(t) => { setSelectedTool(t); }}
                 onClose={() => { props.ctx.state.mapMaking.set(false); }}
                 onClearMap={handleClearMap}
+                onSave={handleSave}
             />
         </Container>
     );

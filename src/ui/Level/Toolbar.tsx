@@ -6,6 +6,7 @@ import noAttribute from 'icons/no-attribute.svg';
 import finish from 'icons/finish.svg';
 import clear from 'icons/clear.svg';
 import arrowRight from 'icons/arrow-right.svg';
+import save from 'icons/save.svg';
 import { Attribute } from 'level/level';
 
 const Container = styled.aside`
@@ -17,7 +18,7 @@ const Container = styled.aside`
     z-index: 100;
 `;
 
-const Button = styled.button<{ isSelected: boolean, bottom?: boolean }>`
+const Button = styled.button<{ isSelected?: boolean, bottom?: boolean }>`
     width: 28px;
     height: 28px;
     margin-bottom: 6px;
@@ -38,10 +39,12 @@ const Button = styled.button<{ isSelected: boolean, bottom?: boolean }>`
     ${({ isSelected }) => isSelected && css`
         background: rgba(255, 0, 0, 0.7);
     `}
+`;
 
-    ${({ bottom }) => bottom && css`
-        margin-top: auto;
-    `}
+const Bottom = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
 `;
 
 const Separator = styled.div`
@@ -66,6 +69,7 @@ interface Props {
     onSelectTool: (tool?: Attribute) => void;
     onClearMap: () => void;
     onClose: () => void;
+    onSave: () => void;
 }
 
 export const Toolbar = React.memo((props: Props) => {
@@ -83,12 +87,20 @@ export const Toolbar = React.memo((props: Props) => {
         (e.target as any).blur();
     };
 
+    const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
+        props.onSave();
+        (e.target as any).blur();
+    };
+
     return (
         <Container>
             {items}
             <Separator />
-            <Button onClick={handleClear} className="btn" dangerouslySetInnerHTML={{ __html: clear }} isSelected={false}></Button>
-            <Button onClick={handleClose} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: arrowRight }} isSelected={false}></Button>
+            <Button onClick={handleClear} className="btn" dangerouslySetInnerHTML={{ __html: clear }}></Button>
+            <Bottom>
+                <Button onClick={handleSave} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: save }}></Button>
+                <Button onClick={handleClose} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: arrowRight }}></Button>
+            </Bottom>
         </Container>
     );
 });
