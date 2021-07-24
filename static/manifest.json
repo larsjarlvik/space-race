@@ -2,6 +2,7 @@
     "short_name": "Space Race",
     "name": "Space Racing!",
     "display": "fullscreen",
+    "orientation": "landscape",
     "start_url": "/",
     "background_color": "#222",
     "theme_color": "#222",
