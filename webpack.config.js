@@ -36,9 +36,11 @@ module.exports = (env, argv) => ({
             filename: 'index.html',
         }),
         new CleanWebpackPlugin(),
-        new CopyPlugin({ patterns: [
-            { from: 'static', to: '.' },
-        ]}),
+        new CopyPlugin({
+            patterns: [
+                { from: 'static', to: '.' },
+            ]
+        }),
         new webpack.DefinePlugin({
             'process.env': { NODE_ENV: JSON.stringify(argv.mode) }
         })
@@ -50,6 +52,7 @@ module.exports = (env, argv) => ({
         compress: true,
         hot: true,
         port: 8080,
+        host: '0.0.0.0',
     },
     performance: {
         hints: false,

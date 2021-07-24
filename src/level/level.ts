@@ -155,7 +155,6 @@ export class Level {
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.receiveShadow = true;
-        mesh.castShadow = false;
         mesh.position.set(x, y, z);
         mesh.renderOrder = -1;
 

@@ -47,9 +47,6 @@ function animation(time: number) {
         ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
         ctx.state.scrollMap.set(true);
     }
-    if (ctx.keys['KeyR'] === KeyState.Pressed) {
-        ctx.setGameState(GameState.Running, true);
-    }
     if (ctx.keys['KeyF'] === KeyState.Pressed) {
         ctx.toggleFullscreen();
     }
@@ -62,8 +59,9 @@ function animation(time: number) {
             ctx.camera.directional.position.set(ctx.ship.position.x - 10.0, 10.0, ctx.ship.position.z - 8.0);
             ctx.camera.directional.target = ctx.ship.model;
             ctx.level.update(ctx);
-            ctx.skybox.update(ctx);
         }
+
+        ctx.skybox.update(ctx);
         frameTime -= FIXED_TIME_STEP;
     }
 

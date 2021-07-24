@@ -12,11 +12,19 @@ export class Camera {
         this.ambient = new THREE.AmbientLight(new THREE.Color(1.0, 1.0, 1.0), 1.2);
         this.directional = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);
 
+
+        const size = 1 << 31 - Math.clz32(Math.max(window.innerWidth, window.innerHeight));
+
         this.directional.castShadow = true;
-        this.directional.shadow.mapSize.width = 2048;
-        this.directional.shadow.mapSize.height = 2048;
-        this.directional.shadow.camera.near = 0.5;
-        this.directional.shadow.camera.far = 20.0;
+        this.directional.shadow.mapSize.width = size;
+        this.directional.shadow.mapSize.height = size;
+        this.directional.shadow.camera.near = 10.0;
+        this.directional.shadow.camera.far = 25.0;
+        this.directional.shadow.camera.bottom = -1.5;
+        this.directional.shadow.camera.top = 1.5;
+        this.directional.shadow.camera.left = -1.5;
+        this.directional.shadow.camera.right = 1.5;
+        this.directional.shadow.radius = 5.0;
 
         this.camera.position.y = 4.0;
         this.camera.position.z = 5.0;
