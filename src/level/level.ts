@@ -26,10 +26,8 @@ export interface Tile {
 export class Level {
     public tiles: Tile[] = [];
     raw: RawTile[] = [];
-
     orm: THREE.Texture;
     normal: THREE.Texture;
-    baseColor: THREE.Texture;
 
     constructor() {
         const loader = new THREE.TextureLoader();
@@ -90,6 +88,8 @@ export class Level {
                 ctx.scene.remove(raw.mesh);
             }
         });
+        this.tiles = [];
+        this.raw = [];
     }
 
     public getTile(x: number, z: number) {

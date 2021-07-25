@@ -42,6 +42,7 @@ export const Maps = React.memo((props: Props) => {
         const map = (e.target as HTMLButtonElement).dataset.map!;
 
         props.ctx.setGameState(GameState.Loading);
+        props.ctx.level.reset(props.ctx);
         await props.ctx.level.load(props.ctx, map);
         props.ctx.setGameState(GameState.Running);
     };
