@@ -4,7 +4,8 @@ import { Context, GameState } from 'context';
 import * as React from 'react';
 import { Fps } from './Fps';
 import { Loading } from './Screens/Loading';
-import { Paused } from './Screens/Paused';
+import { MainMenu } from './Screens/MainMenu';
+import { Maps } from './Screens/Maps';
 import { Overview } from './Level/Overview';
 import ReactDOM from 'react-dom';
 import { Menu } from './Menu';
@@ -36,12 +37,14 @@ const getScreen = (ctx: Context, gameState: GameState) => {
     switch (gameState) {
         case GameState.Loading:
             return <Loading />;
-        case GameState.Paused:
-            return <Paused ctx={ctx} displayText="" />;
+        case GameState.MainMenu:
+            return <MainMenu ctx={ctx} displayText="" />;
         case GameState.Completed:
-            return <Paused ctx={ctx} displayText="Level Complete!" />;
+            return <MainMenu ctx={ctx} displayText="Level Complete!" />;
         case GameState.Crashed:
-            return <Paused ctx={ctx} displayText="Crashed!" />;
+            return <MainMenu ctx={ctx} displayText="Crashed!" />;
+        case GameState.Maps:
+            return <Maps ctx={ctx} />;
     }
 
     return null;
@@ -54,7 +57,7 @@ export const Main = React.memo((props: Props) => {
         ReactDOM.createPortal(<Overview ctx={props.ctx} />, document.getElementById('map')!) : null;
 
     const handleToggleMenu = () => {
-        props.ctx.state.gameState.set(GameState.Paused);
+        props.ctx.state.gameState.set(GameState.MainMenu);
     };
 
     const menu = state.gameState.get() === GameState.Running ?

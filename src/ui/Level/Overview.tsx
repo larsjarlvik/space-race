@@ -65,6 +65,21 @@ export const Overview = React.memo((props: Props) => {
 
     const handleSave = () => {
         const mapName = prompt('Name:');
+        if (!mapName || mapName.length < 3) {
+            return;
+        }
+
+        if (props.ctx.level.tiles.length === 0) {
+            fetch(`/api/map?m=${mapName}&d=delete`, {
+                method: 'GET',
+            }).then((response) => {
+                response.text().then(() => {
+                    alert('Map deleted!');
+                });
+            });
+            return;
+        }
+
         fetch(`/api/map?m=${mapName}`, {
             method: 'POST',
             body: JSON.stringify(props.ctx.level.tiles)

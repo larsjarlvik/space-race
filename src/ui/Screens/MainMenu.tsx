@@ -25,9 +25,9 @@ interface Props {
     ctx: Context;
 }
 
-export const Paused = React.memo((props: Props) => {
+export const MainMenu = React.memo((props: Props) => {
     const handleStart = () => {
-        props.ctx.setGameState(GameState.Running, true);
+        props.ctx.setGameState(GameState.Maps, true);
     };
 
     const handleMap = () => {

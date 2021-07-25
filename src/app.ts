@@ -15,9 +15,10 @@ let lastFrame = 0;
 const init = async () => {
     await ctx.skybox.load(ctx, 'skybox');
     await ctx.ship.load();
-    await ctx.level.load(ctx, 'level-1');
 
-    ctx.state.gameState.set(GameState.Paused);
+    const maps = await ctx.level.list();
+    ctx.state.maps.set(maps);
+    ctx.state.gameState.set(GameState.MainMenu);
 };
 
 
@@ -41,7 +42,12 @@ function animation(time: number) {
     if (frameTime > 5.0) frameTime = 5.0;
 
     if (ctx.keys['KeyR'] === KeyState.Pressed) {
-        ctx.setGameState(GameState.Running, true);
+        if (ctx.state.gameState.get() === GameState.MainMenu ||
+            ctx.state.gameState.get() === GameState.Maps) {
+            ctx.setGameState(GameState.Maps);
+        } else {
+            ctx.setGameState(GameState.Running, true);
+        }
     }
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
         ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
@@ -49,6 +55,9 @@ function animation(time: number) {
     }
     if (ctx.keys['KeyF'] === KeyState.Pressed) {
         ctx.toggleFullscreen();
+    }
+    if (ctx.keys['Escape'] === KeyState.Pressed) {
+        ctx.state.gameState.set(GameState.MainMenu);
     }
 
     while (frameTime > 0.0) {

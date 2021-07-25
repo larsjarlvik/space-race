@@ -37,6 +37,18 @@ export class Level {
         this.normal = loader.load('/models/tile_normal.png');
     }
 
+    public async list() {
+        return new Promise<string[]>((resolve) => {
+            fetch(`/api/map`, {
+                method: 'GET',
+            }).then((response) => {
+                response.json().then((maps: string[]) => {
+                    resolve(maps);
+                });
+            });
+        });
+    }
+
     public async load(ctx: Context, name: string) {
         return new Promise<void>((resolve) => {
             fetch(`/api/map?m=${name}`, {

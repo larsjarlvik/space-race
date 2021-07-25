@@ -9,8 +9,9 @@ import * as nipple from 'nipplejs';
 
 export enum GameState {
     Loading,
-    Paused,
+    MainMenu,
     Running,
+    Maps,
     Crashed,
     Completed,
 }
@@ -19,6 +20,7 @@ export interface State {
     gameState: GameState;
     mapMaking: boolean;
     scrollMap: boolean;
+    maps: string[];
     fps: number;
 }
 
