@@ -52,8 +52,14 @@ export const KeyButtonList = React.memo((props: Props) => {
 
     const buttons = props.buttons.map((button, i) => {
         const kbd = button.kbd && <kbd>{button.kbd}</kbd>;
+
+        const handleClick = React.useCallback(() => {
+            button.onClick(button.data);
+            setSelectedIndex(i);
+        }, [i]);
+
         return (
-            <KeyButton key={i} ctx={props.ctx} active={i === selectedIndex} onClick={button.onClick} onMouseOver={() => { setSelectedIndex(i); }}>
+            <KeyButton key={i} ctx={props.ctx} active={i === selectedIndex} onClick={handleClick} onMouseOver={() => { setSelectedIndex(i); }}>
                 <><span>{button.children}</span> {kbd}</>
             </KeyButton>
         );

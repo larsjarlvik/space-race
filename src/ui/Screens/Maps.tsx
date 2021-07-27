@@ -23,12 +23,12 @@ export const Maps = React.memo((props: Props) => {
             props.ctx.level.reset(props.ctx);
             await props.ctx.level.load(props.ctx, data.map);
             props.ctx.state.uiState.set(UiState.None);
+            props.ctx.setGameState(GameState.Running);
         } catch (e) {
             alert(`Failed to load map: ${e.message}`);
             props.ctx.state.uiState.set(UiState.MainMenu);
+            props.ctx.setGameState(GameState.Paused);
         }
-
-        props.ctx.setGameState(GameState.Running);
     };
 
     const maps = props.ctx.state.maps.get().map(m => (

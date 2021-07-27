@@ -48,15 +48,21 @@ export class Level {
     }
 
     public async load(ctx: Context, name: string) {
-        return new Promise<void>((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             fetch(`/api/map?m=${name}`, {
                 method: 'POST',
             }).then((response) => {
+                if (!response.ok) {
+                    reject(response.statusText);
+                }
+
                 response.json().then((tiles: Tile[]) => {
                     tiles.forEach(t => {
                         this.setTile(ctx, t.x, t.z, t.l, t.a);
                     });
                     resolve();
+                }, (err) => {
+                    reject(err);
                 });
             });
         });
