@@ -1,6 +1,6 @@
 import { useState } from '@hookstate/core';
 import styled, { css } from 'styled-components';
-import { Context, GameState } from 'context';
+import { Context, GameState, UiState } from 'context';
 import * as React from 'react';
 import { Fps } from './Fps';
 import { Loading } from './Screens/Loading';
@@ -33,18 +33,16 @@ const Backdrop = styled.main<{ show: boolean }>`
     `}
 `;
 
-const getScreen = (ctx: Context, gameState: GameState) => {
-    switch (gameState) {
-        case GameState.Loading:
-            return <Loading />;
-        case GameState.MainMenu:
-            return <MainMenu ctx={ctx} displayText="" />;
-        case GameState.Completed:
-            return <MainMenu ctx={ctx} displayText="Level Complete!" />;
-        case GameState.Crashed:
-            return <MainMenu ctx={ctx} displayText="Crashed!" />;
-        case GameState.Maps:
-            return <Maps ctx={ctx} />;
+const getScreen = (ctx: Context, uiState: UiState) => {
+    switch (uiState) {
+        case UiState.Loading:
+            return <Backdrop show={screen !== null}><Loading /></Backdrop>;
+        case UiState.MainMenu:
+            return <Backdrop show={screen !== null}><MainMenu ctx={ctx} displayText={ctx.state.menuMessage.get()} /></Backdrop>;
+        case UiState.MapSelector:
+            return <Backdrop show={screen !== null}><Maps ctx={ctx} /></Backdrop>;
+        case UiState.MapBuilder:
+            return ReactDOM.createPortal(<Overview ctx={ctx} />, document.getElementById('map')!);
     }
 
     return null;
@@ -52,12 +50,11 @@ const getScreen = (ctx: Context, gameState: GameState) => {
 
 export const Main = React.memo((props: Props) => {
     const state = useState(props.ctx.state);
-    const screen = getScreen(props.ctx, state.gameState.get());
-    const mapMaking = state.mapMaking.get() ?
-        ReactDOM.createPortal(<Overview ctx={props.ctx} />, document.getElementById('map')!) : null;
+    const screen = getScreen(props.ctx, state.uiState.get());
 
     const handleToggleMenu = () => {
-        props.ctx.state.gameState.set(GameState.MainMenu);
+        props.ctx.state.gameState.set(GameState.Paused);
+        props.ctx.state.uiState.set(UiState.MainMenu);
     };
 
     const menu = state.gameState.get() === GameState.Running ?
@@ -65,11 +62,8 @@ export const Main = React.memo((props: Props) => {
 
     return (
         <>
-            <Backdrop show={screen !== null}>
-                {screen}
-            </Backdrop>
+            {screen}
             <Fps fps={state.fps.get()} />
-            {mapMaking}
             {menu}
         </>
     );

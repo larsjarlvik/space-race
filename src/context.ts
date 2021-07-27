@@ -8,20 +8,25 @@ import { createState, State as StateWrapper } from '@hookstate/core';
 import * as nipple from 'nipplejs';
 
 export enum GameState {
+    Paused,
+    Running,
+}
+
+export enum UiState {
+    None,
     Loading,
     MainMenu,
-    Running,
-    Maps,
-    Crashed,
-    Completed,
+    MapSelector,
+    MapBuilder,
 }
 
 export interface State {
     gameState: GameState;
-    mapMaking: boolean;
+    uiState: UiState;
     scrollMap: boolean;
     maps: string[];
     fps: number;
+    menuMessage?: string;
 }
 
 export enum KeyState {
@@ -66,9 +71,9 @@ export class Context {
 
         this.keys = {};
         this.state = createState({
-            gameState: GameState.Loading,
+            gameState: GameState.Paused,
+            uiState: UiState.Loading,
             fps: 0,
-            mapMaking: false,
         } as State);
 
         window.addEventListener('resize', this.resize.bind(this));
@@ -101,6 +106,7 @@ export class Context {
             if (this.ship) this.ship.add(this);
             this.nippleArea.classList.add('show');
             this.jumpArea.classList.add('show');
+            this.state.menuMessage.set(undefined);
             document.getElementById('ui')?.classList.add('running');
         } else {
             if (this.ship) this.ship.remove(this);

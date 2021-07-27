@@ -1,4 +1,4 @@
-import { Context, GameState } from 'context';
+import { Context, GameState, UiState } from 'context';
 import * as React from 'react';
 import styled from 'styled-components';
 
@@ -32,7 +32,6 @@ const Button = styled.button`
     }
 `;
 
-
 interface Props {
     ctx: Context;
 }
@@ -41,9 +40,10 @@ export const Maps = React.memo((props: Props) => {
     const handleStart = async (e: React.MouseEvent<HTMLButtonElement>) => {
         const map = (e.target as HTMLButtonElement).dataset.map!;
 
-        props.ctx.setGameState(GameState.Loading);
+        props.ctx.state.uiState.set(UiState.Loading);
         props.ctx.level.reset(props.ctx);
         await props.ctx.level.load(props.ctx, map);
+        props.ctx.state.uiState.set(UiState.None);
         props.ctx.setGameState(GameState.Running);
     };
 

@@ -37,7 +37,6 @@ const Tile = styled.button<{ attribute?: Attribute, opacity: number }>`
     `}
 `;
 
-
 interface Props {
     selectedTool: Attribute | undefined;
     tiles: Tile[];

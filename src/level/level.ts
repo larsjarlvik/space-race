@@ -37,7 +37,7 @@ export class Level {
 
     public async list() {
         return new Promise<string[]>((resolve) => {
-            fetch(`/api/map`, {
+            fetch('/api/map', {
                 method: 'GET',
             }).then((response) => {
                 response.json().then((maps: string[]) => {

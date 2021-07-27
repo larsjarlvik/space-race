@@ -1,4 +1,4 @@
-import { Context } from 'context';
+import { Context, GameState, UiState } from 'context';
 import { Attribute } from 'level/level';
 import * as React from 'react';
 import styled from 'styled-components';
@@ -90,6 +90,10 @@ export const Overview = React.memo((props: Props) => {
         });
     };
 
+    const handleClose = () => {
+        props.ctx.state.uiState.set(props.ctx.state.gameState.get() === GameState.Running ? UiState.None : UiState.MainMenu);
+    };
+
     return (
         <Container onContextMenu={(e) => { e.preventDefault(); }}>
             <Scroll ref={scrollRef as any}>
@@ -98,7 +102,7 @@ export const Overview = React.memo((props: Props) => {
             <Toolbar
                 selectedTool={selectedTool}
                 onSelectTool={(t) => { setSelectedTool(t); }}
-                onClose={() => { props.ctx.state.mapMaking.set(false); }}
+                onClose={handleClose}
                 onClearMap={handleClearMap}
                 onSave={handleSave}
             />

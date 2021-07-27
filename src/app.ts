@@ -1,4 +1,4 @@
-import { Context, GameState, KeyState } from 'context';
+import { Context, GameState, KeyState, UiState } from 'context';
 import * as ui from 'ui/Index';
 
 window.addEventListener('load', () => {
@@ -18,7 +18,7 @@ const init = async () => {
 
     const maps = await ctx.level.list();
     ctx.state.maps.set(maps);
-    ctx.state.gameState.set(GameState.MainMenu);
+    ctx.state.uiState.set(UiState.MainMenu);
 };
 
 
@@ -42,22 +42,25 @@ function animation(time: number) {
     if (frameTime > 5.0) frameTime = 5.0;
 
     if (ctx.keys['KeyR'] === KeyState.Pressed) {
-        if (ctx.state.gameState.get() === GameState.MainMenu ||
-            ctx.state.gameState.get() === GameState.Maps) {
-            ctx.setGameState(GameState.Maps);
-        } else {
+        if (ctx.level && ctx.state.uiState.get() === UiState.None) {
             ctx.setGameState(GameState.Running, true);
+            ctx.state.uiState.set(UiState.None);
+        } else if (ctx.state.uiState.get() === UiState.MainMenu) {
+            ctx.state.uiState.set(UiState.MapSelector);
         }
     }
+
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
-        ctx.state.mapMaking.set(!ctx.state.mapMaking.get());
+        const close = ctx.state.gameState.get() === GameState.Running ? UiState.None : UiState.MainMenu;
+        ctx.state.uiState.set(ctx.state.uiState.get() === UiState.MapBuilder ? close : UiState.MapBuilder);
         ctx.state.scrollMap.set(true);
     }
     if (ctx.keys['KeyF'] === KeyState.Pressed) {
         ctx.toggleFullscreen();
     }
     if (ctx.keys['Escape'] === KeyState.Pressed) {
-        ctx.state.gameState.set(GameState.MainMenu);
+        ctx.state.gameState.set(GameState.Paused);
+        ctx.state.uiState.set(UiState.MainMenu);
     }
 
     while (frameTime > 0.0) {

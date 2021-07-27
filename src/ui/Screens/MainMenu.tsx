@@ -1,4 +1,4 @@
-import { Context, GameState } from 'context';
+import { Context, UiState } from 'context';
 import * as React from 'react';
 import styled from 'styled-components';
 
@@ -21,17 +21,17 @@ const Button = styled.button`
 
 
 interface Props {
-    displayText: string;
+    displayText?: string;
     ctx: Context;
 }
 
 export const MainMenu = React.memo((props: Props) => {
     const handleStart = () => {
-        props.ctx.setGameState(GameState.Maps, true);
+        props.ctx.state.uiState.set(UiState.MapSelector);
     };
 
     const handleMap = () => {
-        props.ctx.state.mapMaking.set(true);
+        props.ctx.state.uiState.set(UiState.MapBuilder);
         props.ctx.state.scrollMap.set(true);
     };
 

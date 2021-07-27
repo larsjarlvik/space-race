@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Circle } from 'detect-collisions';
-import { Context, GameState } from 'context';
+import { Context, GameState, UiState } from 'context';
 import { Attribute } from 'level/level';
 import { Exhaust } from './exhaust';
 
@@ -101,7 +101,7 @@ export class Ship {
                 const collider = ctx.level.getTile(result.b.x, result.b.y);
                 if (collider) {
                     if (collider.tile.a === Attribute.FinishLine && result.overlap > 1.2) {
-                        ctx.setGameState(GameState.Completed);
+                        this.endLevel(ctx, 'Mission Completed!');
                     } else if (collider.raw.top > this.model.position.y - COLLIDER_Z_PAD && collider.raw.bottom < this.model.position.y + COLLIDER_Z_PAD) {
                         ground = Math.max(ground, collider.raw.top);
                     }
@@ -117,7 +117,7 @@ export class Ship {
 
         if (this.model.position.y <= ground + HOVER) {
             if (ground - this.model.position.y > 0.2) {
-                ctx.setGameState(GameState.Crashed);
+                this.endLevel(ctx, 'Crashed!');
             } else {
                 this.model.position.y = ground + HOVER;
                 this.speed.y = Math.max(this.speed.y, 0.0);
@@ -125,7 +125,7 @@ export class Ship {
         }
 
         if (this.model.position.y < -20.0) {
-            ctx.setGameState(GameState.Crashed);
+            this.endLevel(ctx, 'Crashed!');
         }
 
         this.model.rotation.x = this.speed.y * LEAN;
@@ -144,6 +144,12 @@ export class Ship {
     public remove(ctx: Context) {
         this.exhaust.remove(ctx);
         ctx.ship && ctx.scene.remove(ctx.ship.model);
+    }
+
+    private endLevel(ctx: Context, message: string) {
+        ctx.setGameState(GameState.Paused);
+        ctx.state.uiState.set(UiState.MainMenu);
+        ctx.state.menuMessage.set(message);
     }
 
     get position(): THREE.Vector3 {
