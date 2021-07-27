@@ -18,10 +18,16 @@ interface Props {
 
 export const Maps = React.memo((props: Props) => {
     const handleStart = async (data: KeyButtonData) => {
-        props.ctx.state.uiState.set(UiState.Loading);
-        props.ctx.level.reset(props.ctx);
-        await props.ctx.level.load(props.ctx, data.map);
-        props.ctx.state.uiState.set(UiState.None);
+        try {
+            props.ctx.state.uiState.set(UiState.Loading);
+            props.ctx.level.reset(props.ctx);
+            await props.ctx.level.load(props.ctx, data.map);
+            props.ctx.state.uiState.set(UiState.None);
+        } catch (e) {
+            alert(`Failed to load map: ${e.message}`);
+            props.ctx.state.uiState.set(UiState.MainMenu);
+        }
+
         props.ctx.setGameState(GameState.Running);
     };
 
