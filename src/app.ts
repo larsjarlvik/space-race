@@ -41,15 +41,6 @@ function animation(time: number) {
 
     if (frameTime > 5.0) frameTime = 5.0;
 
-    if (ctx.keys['KeyR'] === KeyState.Pressed) {
-        if (ctx.level && ctx.state.uiState.get() === UiState.None) {
-            ctx.setGameState(GameState.Running, true);
-            ctx.state.uiState.set(UiState.None);
-        } else if (ctx.state.uiState.get() === UiState.MainMenu) {
-            ctx.state.uiState.set(UiState.MapSelector);
-        }
-    }
-
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
         const close = ctx.state.gameState.get() === GameState.Running ? UiState.None : UiState.MainMenu;
         ctx.state.uiState.set(ctx.state.uiState.get() === UiState.MapBuilder ? close : UiState.MapBuilder);

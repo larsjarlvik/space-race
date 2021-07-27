@@ -16,6 +16,7 @@ export enum UiState {
     None,
     Loading,
     MainMenu,
+    GameEnd,
     MapSelector,
     MapBuilder,
 }
@@ -26,7 +27,8 @@ export interface State {
     scrollMap: boolean;
     maps: string[];
     fps: number;
-    menuMessage?: string;
+    gameEndMessage?: string;
+    menuIndex: number;
 }
 
 export enum KeyState {
@@ -74,6 +76,7 @@ export class Context {
             gameState: GameState.Paused,
             uiState: UiState.Loading,
             fps: 0,
+            menuIndex: 0,
         } as State);
 
         window.addEventListener('resize', this.resize.bind(this));
@@ -106,13 +109,12 @@ export class Context {
             if (this.ship) this.ship.add(this);
             this.nippleArea.classList.add('show');
             this.jumpArea.classList.add('show');
-            this.state.menuMessage.set(undefined);
+            this.state.gameEndMessage.set(undefined);
             document.getElementById('ui')?.classList.add('running');
         } else {
             if (this.ship) this.ship.remove(this);
             this.nippleArea.classList.remove('show');
             this.jumpArea.classList.remove('show');
-            if (this.level) this.level.reset(this);
             document.getElementById('ui')?.classList.remove('running');
         }
 

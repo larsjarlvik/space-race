@@ -51,7 +51,6 @@ export const Grid = ((props: Props) => {
         if (!mouseDown) return;
 
         const tile = (e.target as HTMLButtonElement);
-        if (lastTile) console.log(parseInt(tile.dataset.tileX!), parseInt(lastTile.dataset.tileX!));
         if (lastTile && (
             parseInt(tile.dataset.tileX!) === parseInt(lastTile.dataset.tileX!) &&
             parseInt(tile.dataset.tileZ!) === parseInt(lastTile.dataset.tileZ!))

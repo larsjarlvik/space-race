@@ -147,9 +147,9 @@ export class Ship {
     }
 
     private endLevel(ctx: Context, message: string) {
+        ctx.state.gameEndMessage.set(message);
         ctx.setGameState(GameState.Paused);
-        ctx.state.uiState.set(UiState.MainMenu);
-        ctx.state.menuMessage.set(message);
+        ctx.state.uiState.set(UiState.GameEnd);
     }
 
     get position(): THREE.Vector3 {

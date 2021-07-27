@@ -9,6 +9,7 @@ import { Maps } from './Screens/Maps';
 import { Overview } from './Level/Overview';
 import ReactDOM from 'react-dom';
 import { Menu } from './Menu';
+import { GameEnd } from './Screens/GameEnd';
 
 interface Props {
     ctx: Context;
@@ -38,7 +39,9 @@ const getScreen = (ctx: Context, uiState: UiState) => {
         case UiState.Loading:
             return <Backdrop show={screen !== null}><Loading /></Backdrop>;
         case UiState.MainMenu:
-            return <Backdrop show={screen !== null}><MainMenu ctx={ctx} displayText={ctx.state.menuMessage.get()} /></Backdrop>;
+            return <Backdrop show={screen !== null}><MainMenu ctx={ctx} /></Backdrop>;
+        case UiState.GameEnd:
+            return <Backdrop show={screen !== null}><GameEnd ctx={ctx} /></Backdrop>;
         case UiState.MapSelector:
             return <Backdrop show={screen !== null}><Maps ctx={ctx} /></Backdrop>;
         case UiState.MapBuilder:
