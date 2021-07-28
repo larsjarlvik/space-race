@@ -29,8 +29,8 @@ export const MainMenu = React.memo((props: Props) => {
         <section>
             <KeyButtonList buttons={[
                 { children: 'Start Game', onClick: handleStart },
-                { children: 'Create Map', onClick: handleMap, kbd: 'M' },
-                { children: 'Toggle Fullscreen', onClick: handleFullScreen, kbd: 'F' },
+                { children: 'Create Map', onClick: handleMap },
+                { children: 'Toggle Fullscreen', onClick: handleFullScreen },
             ]} />
         </section>
     );

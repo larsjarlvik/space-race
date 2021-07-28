@@ -41,11 +41,6 @@ function animation(time: number) {
 
     if (frameTime > 5.0) frameTime = 5.0;
 
-    if (ctx.keys['KeyM'] === KeyState.Pressed) {
-        const close = ctx.state.gameState.get() === GameState.Paused ? UiState.MainMenu : UiState.None;
-        ctx.state.uiState.set(ctx.state.uiState.get() === UiState.MapBuilder ? close : UiState.MapBuilder);
-        ctx.state.scrollMap.set(true);
-    }
     if (ctx.keys['KeyF'] === KeyState.Pressed) {
         ctx.toggleFullscreen();
     }

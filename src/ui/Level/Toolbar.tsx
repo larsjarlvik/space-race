@@ -1,5 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
+import { Attribute } from 'level/level';
 
 import upDown from 'icons/up-down.svg';
 import noAttribute from 'icons/no-attribute.svg';
@@ -7,7 +8,7 @@ import finish from 'icons/finish.svg';
 import clear from 'icons/clear.svg';
 import arrowRight from 'icons/arrow-right.svg';
 import save from 'icons/save.svg';
-import { Attribute } from 'level/level';
+import open from 'icons/open.svg';
 
 const Container = styled.aside`
     display: flex;
@@ -25,14 +26,12 @@ const Button = styled.button<{ isSelected?: boolean, bottom?: boolean }>`
 
     * {
         fill: #ddd !important;
-        stroke: #ddd !important;
     }
 
     &:hover {
         border-color: #fff;
         * {
             fill: #fff !important;
-            stroke: #fff !important;
         }
     }
 
@@ -70,6 +69,7 @@ interface Props {
     onClearMap: () => void;
     onClose: () => void;
     onSave: () => void;
+    onOpen: () => void;
 }
 
 export const Toolbar = React.memo((props: Props) => {
@@ -87,6 +87,11 @@ export const Toolbar = React.memo((props: Props) => {
         (e.target as any).blur();
     };
 
+    const handleOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+        props.onOpen();
+        (e.target as any).blur();
+    };
+
     const handleSave = (e: React.MouseEvent<HTMLButtonElement>) => {
         props.onSave();
         (e.target as any).blur();
@@ -98,6 +103,7 @@ export const Toolbar = React.memo((props: Props) => {
             <Separator />
             <Button onClick={handleClear} className="btn" dangerouslySetInnerHTML={{ __html: clear }}></Button>
             <Bottom>
+                <Button onClick={handleOpen} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: open }}></Button>
                 <Button onClick={handleSave} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: save }}></Button>
                 <Button onClick={handleClose} bottom={true} className="btn" dangerouslySetInnerHTML={{ __html: arrowRight }}></Button>
             </Bottom>

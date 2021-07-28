@@ -64,7 +64,7 @@ export const Overview = React.memo((props: Props) => {
     };
 
     const handleSave = () => {
-        const mapName = prompt('Name:');
+        const mapName = prompt('Save as:');
         if (!mapName || mapName.length < 3) {
             return;
         }
@@ -90,6 +90,22 @@ export const Overview = React.memo((props: Props) => {
         });
     };
 
+    const handleOpen = () => {
+        const mapName = prompt('Load map:');
+        if (!mapName || mapName.length < 3) {
+            return;
+        }
+
+        props.ctx.setGameState(GameState.Paused, true);
+        props.ctx.state.uiState.set(UiState.Loading);
+        props.ctx.state.scrollMap.set(true);
+
+        props.ctx.level.load(props.ctx, mapName).then(() => {
+            props.ctx.setGameState(GameState.MapMaking, true);
+            props.ctx.state.uiState.set(UiState.MapBuilder);
+        });
+    };
+
     const handleClose = () => {
         props.ctx.state.uiState.set(props.ctx.state.gameState.get() === GameState.Running ? UiState.None : UiState.MainMenu);
     };
@@ -105,6 +121,7 @@ export const Overview = React.memo((props: Props) => {
                 onClose={handleClose}
                 onClearMap={handleClearMap}
                 onSave={handleSave}
+                onOpen={handleOpen}
             />
         </Container>
     );
