@@ -14,14 +14,14 @@ export const GameEnd = React.memo((props: Props) => {
     };
 
     const handleMainMenu = () => {
-        props.ctx.level.reset(props.ctx);
+        props.ctx.level.tiles.visible = false;
         props.ctx.state.uiState.set(UiState.MainMenu);
     };
 
     return (
         <section>
             <h2>{props.ctx.state.gameEndMessage.get()}</h2>
-            <KeyButtonList ctx={props.ctx} buttons={[
+            <KeyButtonList buttons={[
                 { children: 'Restart', onClick: handleRestart },
                 { children: 'Main Menu', onClick: handleMainMenu },
             ]} />

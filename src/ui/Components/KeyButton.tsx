@@ -1,4 +1,3 @@
-import { Context } from 'context';
 import * as React from 'react';
 import styled, { css, keyframes } from 'styled-components';
 import arrowRight from 'icons/arrow-right.svg';
@@ -44,7 +43,6 @@ const Arrow = styled.span<{ visible: boolean }>`
 
 
 interface Props {
-    ctx: Context;
     active: boolean;
     children: JSX.Element;
     kbd?: string;

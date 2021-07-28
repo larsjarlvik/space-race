@@ -1,19 +1,12 @@
 import * as THREE from 'three';
 import * as detectCollisions from 'detect-collisions';
-import { Context, GameState } from 'context';
+import { Context } from 'context';
 
 const TILE_SIZE = 4.0;
 
 export enum Attribute {
     None,
     FinishLine,
-}
-
-export interface RawTile {
-    top: number;
-    bottom: number;
-    mesh: THREE.Mesh,
-    collision: detectCollisions.Body,
 }
 
 export interface Tile {
@@ -23,16 +16,23 @@ export interface Tile {
     a: Attribute;
 }
 
+export interface TileData extends Tile {
+    collision: detectCollisions.Body;
+    bottom: number;
+    top: number;
+}
+
 export class Level {
-    public tiles: Tile[] = [];
-    raw: RawTile[] = [];
+    public tiles: THREE.Group;
     orm: THREE.Texture;
     normal: THREE.Texture;
 
-    constructor() {
+    constructor(ctx: Context) {
         const loader = new THREE.TextureLoader();
         this.orm = loader.load('/models/tile_occlusionRoughnessMetallic.png');
         this.normal = loader.load('/models/tile_normal.png');
+        this.tiles = new THREE.Group();
+        ctx.scene.add(this.tiles);
     }
 
     public async list() {
@@ -48,6 +48,8 @@ export class Level {
     }
 
     public async load(ctx: Context, name: string) {
+        this.tiles.clear();
+
         return new Promise<void>((resolve, reject) => {
             fetch(`/api/map?m=${name}`, {
                 method: 'POST',
@@ -69,43 +71,26 @@ export class Level {
     }
 
     public clear(ctx: Context) {
-        this.deleteTile(ctx, this.tiles[0].x, this.tiles[0].z);
-        if (this.tiles.length > 0) this.clear(ctx);
+        this.tiles.children.forEach(r => {
+            ctx.collision.remove(r.userData.collision);
+        });
+        this.tiles.clear();
     }
 
     public update(ctx: Context) {
-        this.raw.forEach(raw => {
-            if (ctx.camera.position.distanceTo(raw.mesh.position) < ctx.camera.far) {
-                (raw.mesh.material as THREE.MeshPhysicalMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(raw.mesh.position)) / ctx.camera.far * 0.02);
+        this.tiles.children.forEach((mesh: THREE.Mesh) => {
+            if (ctx.camera.position.distanceTo(mesh.position) < ctx.camera.far) {
+                (mesh.material as THREE.MeshPhysicalMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(mesh.position)) / ctx.camera.far * 0.02);
             }
         });
     }
 
-    public show(ctx: Context) {
-        this.raw.forEach(raw => {
-            ctx.scene.add(raw.mesh);
-            (raw.mesh.material as THREE.MeshPhysicalMaterial).opacity = 0.0;
-        });
-    }
-
-    public reset(ctx: Context) {
-        this.raw.forEach(raw => {
-            if (raw) {
-                ctx.scene.remove(raw.mesh);
-            }
-        });
-        this.tiles = [];
-        this.raw = [];
-    }
-
-    public getTile(x: number, z: number) {
+    public getTile(x: number, z: number): THREE.Mesh | null {
         const tx = x / TILE_SIZE + 3;
         const tz = (Math.abs(z - 4) - TILE_SIZE / 2) / 4;
 
-        const i = this.tiles.findIndex(t => t && t.x === tx && t.z === tz);
-        if (i < 0) return null;
-
-        return { tile: this.tiles[i], raw: this.raw[i] };
+        const result = this.tiles.children.filter(mesh => mesh.userData.x === tx && mesh.userData.z === tz);
+        return result.length > 0 ? result[0] as THREE.Mesh : null;
     }
 
     public setTile(ctx: Context, x: number, z: number, l: number, a: Attribute) {
@@ -125,34 +110,30 @@ export class Level {
                 transparent: true,
                 opacity: 0
             });
+
             const top = l - 1;
             const mesh = this.createMesh(world_x, top / 2.0 + 0.025, world_z, TILE_SIZE - 0.1, top + 0.05, TILE_SIZE - 0.1, material);
             const collision = ctx.collision.createPolygon(world_x, world_z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
 
-            this.tiles.push({
-                x, z, a, l,
-            });
-            this.raw.push({
-                bottom: -0.03,
-                top,
-                mesh,
-                collision,
-            });
-
-            if (ctx.state.gameState.get() === GameState.Running) {
-                ctx.scene.add(mesh);
-            }
+            mesh.userData = { x, z, a, l, collision, bottom: -0.03, top };
+            this.tiles.add(mesh);
         }
     }
 
-    private deleteTile = (ctx: Context, x: number, z: number) => {
-        this.tiles.forEach((td, i) => {
-            if (td.x === x && td.z === z) {
-                if (this.raw[i]) {
-                    ctx.scene.remove(this.raw[i].mesh);
-                    ctx.collision.remove(this.raw[i].collision);
-                    this.tiles.splice(i, 1);
-                }
+    public getTileData(): Tile[] {
+        return this.tiles.children.map(t => ({
+            x: t.userData.x,
+            z: t.userData.z,
+            l: t.userData.l,
+            a: t.userData.a,
+        }));
+    }
+
+    private deleteTile(ctx: Context, x: number, z: number) {
+        this.tiles.children.forEach((mesh) => {
+            if (mesh.userData.x === x && mesh.userData.z === z) {
+                this.tiles.remove(mesh);
+                ctx.collision.remove(mesh.userData.collision);
             }
         });
     }

@@ -10,6 +10,7 @@ import * as nipple from 'nipplejs';
 export enum GameState {
     Paused,
     Running,
+    MapMaking,
 }
 
 export enum UiState {
@@ -62,11 +63,10 @@ export class Context {
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
         this.collision = new Collisions();
 
-
         this.camera = new Camera(this);
         this.skybox = new Skybox();
         this.ship = new Ship(this);
-        this.level = new Level();
+        this.level = new Level(this);
 
         this.nippleArea = document.getElementById('nipple')!;
         this.jumpArea = document.getElementById('jump')!;
@@ -104,15 +104,16 @@ export class Context {
     public setGameState(gameState: GameState, force = false) {
         if (!force && gameState === this.state.gameState.get()) return;
 
-        if (gameState === GameState.Running) {
-            if (this.level) this.level.show(this);
-            if (this.ship) this.ship.add(this);
+        if (gameState === GameState.Running || gameState === GameState.MapMaking) {
+            this.level.tiles.visible = true;
+            this.ship.reset();
+            this.ship.visible = true;
             this.nippleArea.classList.add('show');
             this.jumpArea.classList.add('show');
             this.state.gameEndMessage.set(undefined);
             document.getElementById('ui')?.classList.add('running');
         } else {
-            if (this.ship) this.ship.remove(this);
+            this.ship.visible = false;
             this.nippleArea.classList.remove('show');
             this.jumpArea.classList.remove('show');
             document.getElementById('ui')?.classList.remove('running');

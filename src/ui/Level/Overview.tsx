@@ -41,7 +41,7 @@ interface Props {
 export const Overview = React.memo((props: Props) => {
     const scrollRef = React.createRef();
     const [selectedTool, setSelectedTool] = React.useState<Attribute>();
-    const [tiles, setTiles] = React.useState(props.ctx.level?.tiles);
+    const [tiles, setTiles] = React.useState(props.ctx.level.getTileData());
 
     React.useEffect(() => {
         const elem = (scrollRef.current as HTMLDivElement);
@@ -52,15 +52,15 @@ export const Overview = React.memo((props: Props) => {
     });
 
     const handleClearMap = () => {
-        props.ctx.level?.clear(props.ctx);
-        props.ctx.level?.setTile(props.ctx, 3, 0, 1, Attribute.None);
-        props.ctx.ship?.reset();
-        setTiles([...props.ctx.level?.tiles ?? []]);
+        props.ctx.level.clear(props.ctx);
+        props.ctx.level.setTile(props.ctx, 3, 0, 1, Attribute.None);
+        props.ctx.ship.reset();
+        setTiles([...props.ctx.level.getTileData() ?? []]);
     };
 
     const handleSetTile = (x: number, z: number, l: number, a: Attribute) => {
         props.ctx.level!.setTile(props.ctx, x, z, l, a);
-        setTiles([...props.ctx.level?.tiles ?? []]);
+        setTiles([...props.ctx.level.getTileData() ?? []]);
     };
 
     const handleSave = () => {
@@ -69,7 +69,7 @@ export const Overview = React.memo((props: Props) => {
             return;
         }
 
-        if (props.ctx.level.tiles.length === 0) {
+        if (props.ctx.level.getTileData().length === 0) {
             fetch(`/api/map?m=${mapName}&d=delete`, {
                 method: 'GET',
             }).then((response) => {
@@ -82,7 +82,7 @@ export const Overview = React.memo((props: Props) => {
 
         fetch(`/api/map?m=${mapName}`, {
             method: 'POST',
-            body: JSON.stringify(props.ctx.level.tiles)
+            body: JSON.stringify(props.ctx.level.getTileData())
         }).then((response) => {
             response.text().then((text) => {
                 alert(text);

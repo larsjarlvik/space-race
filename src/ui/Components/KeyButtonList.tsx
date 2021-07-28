@@ -1,8 +1,6 @@
-import { Context } from 'context';
 import * as React from 'react';
 import styled from 'styled-components';
 import { KeyButton } from './KeyButton';
-
 
 const Nav = styled.nav`
     display: flex;
@@ -23,7 +21,6 @@ interface Button {
 }
 
 interface Props {
-    ctx: Context;
     buttons: Button[];
 }
 
@@ -59,7 +56,7 @@ export const KeyButtonList = React.memo((props: Props) => {
         }, [i]);
 
         return (
-            <KeyButton key={i} ctx={props.ctx} active={i === selectedIndex} onClick={handleClick} onMouseOver={() => { setSelectedIndex(i); }}>
+            <KeyButton key={i} active={i === selectedIndex} onClick={handleClick} onMouseOver={() => { setSelectedIndex(i); }}>
                 <><span>{button.children}</span> {kbd}</>
             </KeyButton>
         );

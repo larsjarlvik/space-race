@@ -14,7 +14,7 @@ let lastFrame = 0;
 
 const init = async () => {
     await ctx.skybox.load(ctx, 'skybox');
-    await ctx.ship.load();
+    await ctx.ship.load(ctx);
 
     const maps = await ctx.level.list();
     ctx.state.maps.set(maps);
@@ -42,7 +42,7 @@ function animation(time: number) {
     if (frameTime > 5.0) frameTime = 5.0;
 
     if (ctx.keys['KeyM'] === KeyState.Pressed) {
-        const close = ctx.state.gameState.get() === GameState.Running ? UiState.None : UiState.MainMenu;
+        const close = ctx.state.gameState.get() === GameState.Paused ? UiState.MainMenu : UiState.None;
         ctx.state.uiState.set(ctx.state.uiState.get() === UiState.MapBuilder ? close : UiState.MapBuilder);
         ctx.state.scrollMap.set(true);
     }
@@ -55,7 +55,7 @@ function animation(time: number) {
     }
 
     while (frameTime > 0.0) {
-        if (ctx.state.gameState.get() === GameState.Running) {
+        if (ctx.state.gameState.get() !== GameState.Paused) {
             ctx.ship.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
             ctx.camera.position = ctx.ship.position;

@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Context } from 'context';
 
 const PARTICLE_SPREAD = 0.16;
 const PARTICLE_X = 0.15;
@@ -9,7 +8,7 @@ const PARTICLE_COUNT = 500;
 const PARTICLE_LIFETIME = 40;
 
 export class Exhaust {
-    private particles: THREE.Points;
+    public particles: THREE.Points;
 
     constructor() {
         const geometry = new THREE.BufferGeometry();
@@ -56,7 +55,7 @@ export class Exhaust {
         for (let i = 0, l = PARTICLE_COUNT; i < l; i++) {
             geom.attributes.position.setX(i, geom.attributes.position.getX(i) - geom.attributes.velocity.getX(i));
             geom.attributes.position.setY(i, geom.attributes.position.getY(i) - geom.attributes.velocity.getY(i));
-            geom.attributes.position.setZ(i, Math.max(position.z + PARTICLE_Z, geom.attributes.position.getZ(i) + geom.attributes.velocity.getZ(i)));
+            geom.attributes.position.setZ(i, Math.max(PARTICLE_Z, geom.attributes.position.getZ(i) + geom.attributes.velocity.getZ(i)));
 
             if (geom.attributes.startTime.getX(i) < performance.now() - geom.attributes.lifeTime.getX(i)) {
                 const rand = Math.random() < 0.5;
@@ -89,13 +88,5 @@ export class Exhaust {
 
         geom.getAttribute('startTime').needsUpdate = true;
         geom.attributes.startTime.needsUpdate = true;
-    }
-
-    public add(ctx: Context) {
-        ctx.scene.add(this.particles);
-    }
-
-    public remove(ctx: Context) {
-        ctx.scene.remove(this.particles);
     }
 }

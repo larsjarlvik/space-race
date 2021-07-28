@@ -27,20 +27,21 @@ export class Ship {
         this.boundingBox = ctx.collision.createCircle(0, 0, 0.885);
     }
 
-    public async load(): Promise<void> {
+    public async load(ctx: Context): Promise<void> {
         return new Promise((resolve) => {
             const loader = new GLTFLoader();
 
             loader.load('/models/ship.gltf', (gltf) => {
                 this.model = gltf.scene.getObjectByName('ship')!;
                 this.model.castShadow = true;
-
+                this.model.visible = false;
                 this.model.traverse((child: any) => {
                     child.material.map.encoding = THREE.LinearEncoding;
                     child.material.metalness = 1.0;
                     child.material.roughness = 0.75;
                 });
 
+                ctx.scene.add(this.model);
                 resolve();
             });
         });
@@ -100,10 +101,10 @@ export class Ship {
             if (this.boundingBox.collides(blocks, result)) {
                 const collider = ctx.level.getTile(result.b.x, result.b.y);
                 if (collider) {
-                    if (collider.tile.a === Attribute.FinishLine && result.overlap > 1.2) {
+                    if (collider.userData.a === Attribute.FinishLine && result.overlap > 1.2) {
                         this.endLevel(ctx, 'Mission Completed!');
-                    } else if (collider.raw.top > this.model.position.y - COLLIDER_Z_PAD && collider.raw.bottom < this.model.position.y + COLLIDER_Z_PAD) {
-                        ground = Math.max(ground, collider.raw.top);
+                    } else if (collider.userData.top > this.model.position.y - COLLIDER_Z_PAD && collider.userData.bottom < this.model.position.y + COLLIDER_Z_PAD) {
+                        ground = Math.max(ground, collider.userData.top);
                     }
                 }
             }
@@ -135,21 +136,24 @@ export class Ship {
         this.exhaust.update(this.model.position, this.model.rotation, Math.max(Math.abs(this.speed.x * 0.3), this.speed.z));
     }
 
-    public add(ctx: Context) {
-        this.reset();
-        this.exhaust.add(ctx);
-        ctx.scene.add(this.model);
+
+    get visible(): boolean {
+        return this.model.visible;
     }
 
-    public remove(ctx: Context) {
-        this.exhaust.remove(ctx);
-        ctx.ship && ctx.scene.remove(ctx.ship.model);
+    set visible(visible: boolean) {
+        this.exhaust.particles.visible = visible;
+        this.model.visible = visible;
     }
 
     private endLevel(ctx: Context, message: string) {
-        ctx.state.gameEndMessage.set(message);
-        ctx.setGameState(GameState.Paused);
-        ctx.state.uiState.set(UiState.GameEnd);
+        if (ctx.state.gameState.get() === GameState.Running) {
+            ctx.state.gameEndMessage.set(message);
+            ctx.setGameState(GameState.Paused);
+            ctx.state.uiState.set(UiState.GameEnd);
+        } else {
+            ctx.setGameState(GameState.MapMaking, true);
+        }
     }
 
     get position(): THREE.Vector3 {

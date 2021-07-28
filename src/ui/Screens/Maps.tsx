@@ -20,7 +20,6 @@ export const Maps = React.memo((props: Props) => {
     const handleStart = async (data: KeyButtonData) => {
         try {
             props.ctx.state.uiState.set(UiState.Loading);
-            props.ctx.level.reset(props.ctx);
             await props.ctx.level.load(props.ctx, data.map);
             props.ctx.state.uiState.set(UiState.None);
             props.ctx.setGameState(GameState.Running);
@@ -37,7 +36,7 @@ export const Maps = React.memo((props: Props) => {
 
     return (
         <Container>
-            <KeyButtonList ctx={props.ctx} buttons={maps} />
+            <KeyButtonList buttons={maps} />
         </Container>
     );
 });
