@@ -8,6 +8,7 @@ const Button = styled.button`
     align-items: center;
     margin-bottom: 12px;
     text-align: left;
+    position: relative;
 
     &:hover {
         span {
@@ -17,15 +18,17 @@ const Button = styled.button`
 `;
 
 const blink = keyframes`
-    0% { transform: translateX(3px); }
-    50% { transform: translateX(-3px); }
-    100% { transform: translateX(3px); }
+    0% { transform: translate3d(3px, -50%, 0); }
+    50% { transform: translate3d(-3px, -50%, 0); }
+    100% { transform: translate3d(3px, -50%, 0); }
 `;
 
 const Arrow = styled.span<{ visible: boolean }>`
+    position: absolute;
+    left: -24px;
+    top: 50%;
     width: 24px;
     height: 24px;
-    margin-right: 8px;
     visibility: hidden;
     animation: ${blink} 1s ease-in-out infinite;
 
