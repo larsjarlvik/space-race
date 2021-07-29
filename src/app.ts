@@ -6,6 +6,7 @@ window.addEventListener('load', () => {
 });
 
 const ctx = new Context();
+if (document.fullscreenEnabled) document.body.requestFullscreen();
 ui.init(ctx);
 
 let fps = 0;
@@ -20,7 +21,6 @@ const init = async () => {
     ctx.state.maps.set(maps);
     ctx.state.uiState.set(UiState.MainMenu);
 };
-
 
 ctx.renderer.setSize(window.innerWidth, window.innerHeight);
 ctx.renderer.setAnimationLoop(animation);
