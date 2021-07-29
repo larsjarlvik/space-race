@@ -5,12 +5,18 @@ window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js');
 });
 
-document.body.addEventListener('click', () => {
-    document.body.requestFullscreen();
-});
-
 const ctx = new Context();
 ui.init(ctx);
+
+const isPwa = window.matchMedia('(display-mode: standalone)').matches;
+ctx.state.isPwa.set(isPwa);
+if (isPwa) {
+    ctx.state.isPwa.set(true);
+
+    document.body.addEventListener('click', () => {
+        document.body.requestFullscreen();
+    });
+}
 
 let fps = 0;
 let lastUpdate = 0;

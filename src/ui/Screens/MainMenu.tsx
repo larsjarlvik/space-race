@@ -1,7 +1,7 @@
 import { Context, GameState, UiState } from 'context';
 import { Attribute } from 'level/level';
 import * as React from 'react';
-import { KeyButtonList } from 'ui/Components/KeyButtonList';
+import { Button, KeyButtonList } from 'ui/Components/KeyButtonList';
 
 interface Props {
     ctx: Context;
@@ -25,13 +25,18 @@ export const MainMenu = React.memo((props: Props) => {
         (e.target as any).blur();
     };
 
+    const buttons = [
+        { children: 'Start Game', onClick: handleStart },
+        { children: 'Create Map', onClick: handleMap },
+    ] as Button[];
+
+    if (!props.ctx.state.isPwa.get()) {
+        buttons.push({ children: 'Toggle Fullscreen', onClick: handleFullScreen });
+    }
+
     return (
         <section>
-            <KeyButtonList buttons={[
-                { children: 'Start Game', onClick: handleStart },
-                { children: 'Create Map', onClick: handleMap },
-                { children: 'Toggle Fullscreen', onClick: handleFullScreen },
-            ]} />
+            <KeyButtonList buttons={buttons} />
         </section>
     );
 });

@@ -13,7 +13,7 @@ export interface KeyButtonData {
     [key: string]: any;
 }
 
-interface Button {
+export interface Button {
     children: JSX.Element | string;
     onClick: (data?: KeyButtonData) => void;
     data?: KeyButtonData,
