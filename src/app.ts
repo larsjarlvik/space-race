@@ -8,7 +8,7 @@ window.addEventListener('load', () => {
 const ctx = new Context();
 ui.init(ctx);
 
-const isPwa = (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator as any).standalone || document.referrer.includes('android-app://');
+const isPwa = (window.matchMedia('(display-mode: fullscreen)').matches) || (window.navigator as any).standalone || document.referrer.includes('android-app://');
 ctx.state.isPwa.set(isPwa);
 if (isPwa) {
     ctx.state.isPwa.set(true);
