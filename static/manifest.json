@@ -1,6 +1,6 @@
 {
-    "short_name": "Space Race!",
-    "name": "",
+    "short_name": "Space Race",
+    "name": "Space Race!",
     "display": "fullscreen",
     "orientation": "landscape",
     "start_url": "/",

@@ -6,7 +6,6 @@ window.addEventListener('load', () => {
 });
 
 const ctx = new Context();
-if (document.fullscreenEnabled) document.body.requestFullscreen();
 ui.init(ctx);
 
 let fps = 0;
