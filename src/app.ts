@@ -5,6 +5,10 @@ window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js');
 });
 
+document.body.addEventListener('click', () => {
+    document.body.requestFullscreen();
+});
+
 const ctx = new Context();
 ui.init(ctx);
 
