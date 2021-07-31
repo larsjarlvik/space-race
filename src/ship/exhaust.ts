@@ -47,6 +47,7 @@ export class Exhaust {
 
         this.particles = new THREE.Points(geometry, material);
         this.particles.frustumCulled = false;
+        this.particles.visible = false;
     }
 
     public update(position: THREE.Vector3, rotation: THREE.Euler, speed: number) {
@@ -55,7 +56,7 @@ export class Exhaust {
         for (let i = 0, l = PARTICLE_COUNT; i < l; i++) {
             geom.attributes.position.setX(i, geom.attributes.position.getX(i) - geom.attributes.velocity.getX(i));
             geom.attributes.position.setY(i, geom.attributes.position.getY(i) - geom.attributes.velocity.getY(i));
-            geom.attributes.position.setZ(i, Math.max(PARTICLE_Z, geom.attributes.position.getZ(i) + geom.attributes.velocity.getZ(i)));
+            geom.attributes.position.setZ(i, Math.max(position.z + PARTICLE_Z, geom.attributes.position.getZ(i) + geom.attributes.velocity.getZ(i)));
 
             if (geom.attributes.startTime.getX(i) < performance.now() - geom.attributes.lifeTime.getX(i)) {
                 const rand = Math.random() < 0.5;

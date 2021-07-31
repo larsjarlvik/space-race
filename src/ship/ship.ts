@@ -42,6 +42,7 @@ export class Ship {
                 });
 
                 ctx.scene.add(this.model);
+                ctx.scene.add(this.exhaust.particles);
                 resolve();
             });
         });
