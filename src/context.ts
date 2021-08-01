@@ -151,6 +151,7 @@ export class Context {
     private resize() {
         this.camera.resize();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(window.devicePixelRatio);
     }
 
     private keyDown(e: KeyboardEvent) {
