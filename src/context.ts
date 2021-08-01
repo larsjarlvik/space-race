@@ -57,7 +57,7 @@ export class Context {
     constructor() {
         this.scene = new THREE.Scene;
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: window.devicePixelRatio < 2.0 });
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.physicallyCorrectLights = true;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.shadowMap.enabled = true;
