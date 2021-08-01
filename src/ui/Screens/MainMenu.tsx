@@ -14,7 +14,7 @@ export const MainMenu = React.memo((props: Props) => {
 
     const handleMap = () => {
         props.ctx.level.clear(props.ctx);
-        props.ctx.level.setTile(props.ctx, 3, 0, 1, Attribute.None);
+        props.ctx.level.setTile(props.ctx, 3, 0, 1, Attribute.Default);
         props.ctx.state.uiState.set(UiState.MapBuilder);
         props.ctx.state.scrollMap.set(true);
         props.ctx.setGameState(GameState.MapMaking);

@@ -62,6 +62,7 @@ export class Context {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
+        this.renderer.outputEncoding = THREE.LinearEncoding;
         this.collision = new Collisions();
 
         this.camera = new Camera(this);
@@ -106,7 +107,7 @@ export class Context {
         if (!force && gameState === this.state.gameState.get()) return;
 
         if (gameState === GameState.Running || gameState === GameState.MapMaking) {
-            this.level.tiles.visible = true;
+            this.level.level.visible = true;
             this.ship.reset();
             this.ship.visible = true;
             this.nippleArea.classList.add('show');
@@ -134,6 +135,16 @@ export class Context {
             document.body.requestFullscreen();
         } else {
             document.exitFullscreen();
+        }
+    }
+
+    public endLevel(ctx: Context, message: string) {
+        if (ctx.state.gameState.get() === GameState.Running) {
+            ctx.state.gameEndMessage.set(message);
+            ctx.setGameState(GameState.Paused);
+            ctx.state.uiState.set(UiState.GameEnd);
+        } else {
+            ctx.setGameState(GameState.MapMaking, true);
         }
     }
 

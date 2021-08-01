@@ -13,7 +13,7 @@ export class Exhaust {
     constructor() {
         const geometry = new THREE.BufferGeometry();
         const textureLoader = new THREE.TextureLoader();
-        const sprite = textureLoader.load('/models/exhaust.png');
+        const sprite = textureLoader.load('/models/ship/exhaust.png');
 
         const vertices: number[] = [];
         const startTime: number[] = [];

@@ -14,7 +14,7 @@ export const GameEnd = React.memo((props: Props) => {
     };
 
     const handleMainMenu = () => {
-        props.ctx.level.tiles.visible = false;
+        props.ctx.level.level.visible = false;
         props.ctx.state.uiState.set(UiState.MainMenu);
     };
 

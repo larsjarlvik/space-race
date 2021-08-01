@@ -18,6 +18,7 @@ export class Skybox {
                 texture.mapping = THREE.CubeReflectionMapping;
                 ctx.scene.background = texture;
                 ctx.scene.environment = texture;
+                ctx.scene.environment.encoding = THREE.LinearEncoding;
                 resolve();
             });
         });

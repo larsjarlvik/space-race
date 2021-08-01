@@ -53,7 +53,7 @@ export const Overview = React.memo((props: Props) => {
 
     const handleClearMap = () => {
         props.ctx.level.clear(props.ctx);
-        props.ctx.level.setTile(props.ctx, 3, 0, 1, Attribute.None);
+        props.ctx.level.setTile(props.ctx, 3, 0, 1, Attribute.Default);
         props.ctx.ship.reset();
         setTiles([...props.ctx.level.getTileData() ?? []]);
     };
@@ -113,7 +113,7 @@ export const Overview = React.memo((props: Props) => {
     return (
         <Container onContextMenu={(e) => { e.preventDefault(); }}>
             <Scroll ref={scrollRef as any}>
-                <Grid tiles={tiles ?? []} setTile={handleSetTile} selectedTool={selectedTool} />
+                <Grid ctx={props.ctx} tiles={tiles ?? []} setTile={handleSetTile} selectedTool={selectedTool} />
             </Scroll>
             <Toolbar
                 selectedTool={selectedTool}

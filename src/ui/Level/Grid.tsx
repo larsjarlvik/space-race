@@ -1,5 +1,6 @@
 import { Attribute, Tile } from 'level/level';
 import * as React from 'react';
+import { Context } from 'context';
 import styled, { css } from 'styled-components';
 
 const MAX_LEVEL = 4;
@@ -21,25 +22,25 @@ const TileWrapper = styled.div`
     line-height: 0;
 `;
 
-const Tile = styled.button<{ attribute?: Attribute, opacity: number }>`
+const Tile = styled.button<{ opacity: number, color?: string }>`
     width: 16px;
     height: 16px;
     border: none;
-    background: #222;
     border-radius: 0;
 
     ${({ opacity }) => css`
         opacity: ${opacity};
     `};
 
-    ${({ attribute }) => attribute === Attribute.FinishLine && css`
-        background: #f00;
+    ${({ color }) => css`
+        background: ${color ? color : '#222'};
     `}
 `;
 
 interface Props {
     selectedTool: Attribute | undefined;
     tiles: Tile[];
+    ctx: Context;
     setTile: (x: number, z: number, l: number, a: Attribute) => void;
 }
 
@@ -61,7 +62,7 @@ export const Grid = ((props: Props) => {
         const x = parseInt(tile.dataset.tileX!);
         const z = parseInt(tile.dataset.tileZ!);
         let l = parseInt(tile.dataset.tileL ?? '-1');
-        let a = tile.dataset.tileA ? parseInt(tile.dataset.tileA) as Attribute : Attribute.None;
+        let a = tile.dataset.tileA ? tile.dataset.tileA as Attribute : Attribute.Default;
 
         if (props.selectedTool === undefined) {
             l = l + (mouseDown === 1 ? 1 : -1);
@@ -102,8 +103,8 @@ export const Grid = ((props: Props) => {
                         <Tile
                             onMouseEnter={handleMouseEnter}
                             onMouseDown={handleMouseDown}
-                            attribute={t?.a}
                             opacity={(t?.l ?? 0) / MAX_LEVEL}
+                            color={props.ctx.level.attributes[t?.a ?? '']?.editorColor}
                             data-tile-z={z}
                             data-tile-x={x}
                             data-tile-l={t?.l ?? 0}

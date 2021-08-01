@@ -4,6 +4,7 @@ import { Attribute } from 'level/level';
 
 import upDown from 'icons/up-down.svg';
 import noAttribute from 'icons/no-attribute.svg';
+import jump from 'icons/jump.svg';
 import finish from 'icons/finish.svg';
 import clear from 'icons/clear.svg';
 import arrowRight from 'icons/arrow-right.svg';
@@ -59,7 +60,8 @@ interface ToolbarItem {
 
 const toolbarItems = [
     { icon: upDown },
-    { icon: noAttribute, attribute: Attribute.None },
+    { icon: noAttribute, attribute: Attribute.Default },
+    { icon: jump, attribute: Attribute.Jump },
     { icon: finish, attribute: Attribute.FinishLine },
 ] as ToolbarItem[];
 
@@ -73,8 +75,8 @@ interface Props {
 }
 
 export const Toolbar = React.memo((props: Props) => {
-    const items = toolbarItems.map((t) =>
-        <Button key={t.icon} className="btn" isSelected={t.attribute === props.selectedTool} onClick={() => props.onSelectTool(t.attribute)} dangerouslySetInnerHTML={{ __html: t.icon }}></Button>
+    const items = toolbarItems.map((t, i) =>
+        <Button key={i} className="btn" isSelected={t.attribute === props.selectedTool} onClick={() => props.onSelectTool(t.attribute)} dangerouslySetInnerHTML={{ __html: t.icon }}></Button>
     );
 
     const handleClear = (e: React.MouseEvent<HTMLButtonElement>) => {

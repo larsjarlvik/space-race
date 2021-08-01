@@ -1,8 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Circle } from 'detect-collisions';
-import { Context, GameState, UiState } from 'context';
-import { Attribute } from 'level/level';
+import { Context } from 'context';
 import { Exhaust } from './exhaust';
 
 const ACCELERATION = 0.3;
@@ -16,7 +15,7 @@ const COLLIDER_Z_PAD = 1.0;
 const LEAN = 4.0;
 
 export class Ship {
-    private speed: THREE.Vector3;
+    public speed: THREE.Vector3;
     public model: THREE.Object3D;
     private boundingBox: Circle;
     private exhaust: Exhaust;
@@ -31,14 +30,14 @@ export class Ship {
         return new Promise((resolve) => {
             const loader = new GLTFLoader();
 
-            loader.load('/models/ship.gltf', (gltf) => {
+            loader.load('/models/ship/ship.glb', (gltf) => {
                 this.model = gltf.scene.getObjectByName('ship')!;
                 this.model.castShadow = true;
                 this.model.visible = false;
                 this.model.traverse((child: any) => {
                     child.material.map.encoding = THREE.LinearEncoding;
-                    child.material.metalness = 1.0;
-                    child.material.roughness = 0.75;
+                    child.material.metalness = 0.5;
+                    child.material.roughness = 0.5;
                 });
 
                 ctx.scene.add(this.model);
@@ -98,28 +97,34 @@ export class Ship {
         const result = ctx.collision.createResult();
 
         let ground = -1000.0;
+        let collider;
         for (const blocks of potentials) {
             if (this.boundingBox.collides(blocks, result)) {
-                const collider = ctx.level.getTile(result.b.x, result.b.y);
-                if (collider) {
-                    if (collider.userData.a === Attribute.FinishLine && result.overlap > 1.2) {
-                        this.endLevel(ctx, 'Mission Completed!');
-                    } else if (collider.userData.top > this.model.position.y - COLLIDER_Z_PAD && collider.userData.bottom < this.model.position.y + COLLIDER_Z_PAD) {
-                        ground = Math.max(ground, collider.userData.top);
+                const c = ctx.level.getTile(result.b.x, result.b.y);
+                if (c) {
+                    collider = c;
+                    if (c.userData.top > this.model.position.y - COLLIDER_Z_PAD && c.userData.bottom < this.model.position.y + COLLIDER_Z_PAD) {
+                        ground = Math.max(ground, c.userData.top);
                     }
                 }
             }
         }
 
-        if (ctx.keys['Space'] && this.model.position.y <= ground + HOVER) {
-            this.speed.y = 0.1;
+        if (this.model.position.y <= ground + HOVER) {
+            const action = ctx.level.attributes[collider.userData.a];
+            if (action) action.interact(ctx, result.overlap);
+
+            if (ctx.keys['Space'] && this.model.position.y <= ground + HOVER) {
+                this.speed.y = 0.1;
+            }
         }
+
         this.speed.y -= GRAVITY * time;
         this.model.position.y += this.speed.y;
 
         if (this.model.position.y <= ground + HOVER) {
             if (ground - this.model.position.y > 0.2) {
-                this.endLevel(ctx, 'Crashed!');
+                ctx.endLevel(ctx, 'Crashed!');
             } else {
                 this.model.position.y = ground + HOVER;
                 this.speed.y = Math.max(this.speed.y, 0.0);
@@ -127,7 +132,7 @@ export class Ship {
         }
 
         if (this.model.position.y < -20.0) {
-            this.endLevel(ctx, 'Crashed!');
+            ctx.endLevel(ctx, 'Crashed!');
         }
 
         this.model.rotation.x = this.speed.y * LEAN;
@@ -145,16 +150,6 @@ export class Ship {
     set visible(visible: boolean) {
         this.exhaust.particles.visible = visible;
         this.model.visible = visible;
-    }
-
-    private endLevel(ctx: Context, message: string) {
-        if (ctx.state.gameState.get() === GameState.Running) {
-            ctx.state.gameEndMessage.set(message);
-            ctx.setGameState(GameState.Paused);
-            ctx.state.uiState.set(UiState.GameEnd);
-        } else {
-            ctx.setGameState(GameState.MapMaking, true);
-        }
     }
 
     get position(): THREE.Vector3 {
