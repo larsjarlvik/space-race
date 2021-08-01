@@ -101,6 +101,11 @@ export class Level {
                 (mesh.material as THREE.MeshPhysicalMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(mesh.position)) / ctx.camera.far * 0.02);
             }
         });
+
+        Object.keys(this.attributes).forEach(key => {
+            const a = this.attributes[key];
+            if (a.update) a.update(this.tiles[key]);
+        });
     }
 
     public getTile(x: number, z: number): THREE.Mesh | null {

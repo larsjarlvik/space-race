@@ -10,7 +10,7 @@ const HOVER = 0.1;
 const MAX_SPEED_X = 0.5;
 const MAX_SPEED_Z = 0.5;
 const DECEL_X = 1.02;
-const DECEL_Z = 1.005;
+const DECEL_Z = 1.004;
 const COLLIDER_Z_PAD = 1.0;
 const LEAN = 4.0;
 
@@ -67,10 +67,10 @@ export class Ship {
             this.speed.x += ACCELERATION * pos.x * time;
         } else {
             if (ctx.keys['KeyW'] || ctx.keys['ArrowUp']) {
-                this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * time;
+                this.speed.z += clamp(this.speed.z, 1.0, 8.0) * 0.5 * ACCELERATION * time;
             }
             if (ctx.keys['KeyS'] || ctx.keys['ArrowDown']) {
-                this.speed.z -= clamp(this.speed.z, 1.0, 5.0) * 0.3 * ACCELERATION * time;
+                this.speed.z -= clamp(this.speed.z, 1.0, 8.0) * 0.3 * ACCELERATION * time;
             }
 
             if (ctx.keys['KeyD'] || ctx.keys['ArrowRight']) {

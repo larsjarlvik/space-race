@@ -72,7 +72,6 @@ function animation(time: number) {
         ctx.skybox.update(ctx);
         frameTime -= FIXED_TIME_STEP;
     }
-
     ctx.renderer.render(ctx.scene, ctx.camera.camera);
 
     fps++;

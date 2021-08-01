@@ -7,7 +7,7 @@ export class Camera {
     public directional: THREE.DirectionalLight;
 
     constructor(ctx: Context) {
-        this.camera = new THREE.PerspectiveCamera(80.0, window.innerWidth / window.innerHeight, 0.5, 130);
+        this.camera = new THREE.PerspectiveCamera(75.0, window.innerWidth / window.innerHeight, 0.5, 130);
 
         this.ambient = new THREE.AmbientLight(new THREE.Color(1.0, 1.0, 1.0), 1.2);
         this.directional = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);

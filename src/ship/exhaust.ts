@@ -4,8 +4,8 @@ const PARTICLE_SPREAD = 0.16;
 const PARTICLE_X = 0.15;
 const PARTICLE_Y = 0.25;
 const PARTICLE_Z = 0.78;
-const PARTICLE_COUNT = 500;
-const PARTICLE_LIFETIME = 40;
+const PARTICLE_COUNT = 1000;
+const PARTICLE_LIFETIME = 20;
 
 export class Exhaust {
     public particles: THREE.Points;
