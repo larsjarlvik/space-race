@@ -3,13 +3,13 @@ import { BaseAttribute } from '.';
 import { Context } from 'context';
 import { TileMesh } from 'level/tile';
 
-export const jump = {
+export const slowdown = {
     interact: (ctx: Context, overlap: number) => {
-        if (overlap > 1.5) ctx.ship.speed.y = 0.13;
+        if (overlap > 1.5) ctx.ship.speed.z -= 0.008;
     },
     update: (tile: TileMesh) => {
         const material = tile.model.material as THREE.MeshPhysicalMaterial;
-        material.emissiveIntensity = Math.sin(performance.now() * 0.008) * 0.5 + 1.6;
+        material.emissiveIntensity = Math.sin(performance.now() * 0.008) * 0.5 + 1.5;
     },
     editorColor: '#0f0',
 } as BaseAttribute;

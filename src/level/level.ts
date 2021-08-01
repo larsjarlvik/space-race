@@ -10,6 +10,8 @@ export enum Attribute {
     Default = 'default',
     Jump = 'jump',
     FinishLine = 'finish',
+    Speedup = 'speedup',
+    Slowdown = 'slowdown'
 }
 
 export interface Tile {
@@ -41,6 +43,8 @@ export class Level {
         this.attributes = {
             [Attribute.FinishLine]: attributes.finish,
             [Attribute.Jump]: attributes.jump,
+            [Attribute.Speedup]: attributes.speedup,
+            [Attribute.Slowdown]: attributes.slowdown,
         };
 
         ctx.scene.add(this.level);

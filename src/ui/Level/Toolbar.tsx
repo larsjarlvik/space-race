@@ -8,6 +8,8 @@ import jump from 'icons/jump.svg';
 import finish from 'icons/finish.svg';
 import clear from 'icons/clear.svg';
 import arrowRight from 'icons/arrow-right.svg';
+import speedup from 'icons/speedup.svg';
+import slowdown from 'icons/slowdown.svg';
 import save from 'icons/save.svg';
 import open from 'icons/open.svg';
 
@@ -62,6 +64,8 @@ const toolbarItems = [
     { icon: upDown },
     { icon: noAttribute, attribute: Attribute.Default },
     { icon: jump, attribute: Attribute.Jump },
+    { icon: speedup, attribute: Attribute.Speedup },
+    { icon: slowdown, attribute: Attribute.Slowdown },
     { icon: finish, attribute: Attribute.FinishLine },
 ] as ToolbarItem[];
 
