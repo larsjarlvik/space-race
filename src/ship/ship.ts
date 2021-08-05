@@ -13,6 +13,7 @@ const DECEL_X = 1.02;
 const DECEL_Z = 1.004;
 const COLLIDER_Z_PAD = 1.0;
 const LEAN = 4.0;
+const SENSITIVITY = 2.0;
 
 export class Ship {
     public speed: THREE.Vector3;
@@ -61,7 +62,8 @@ export class Ship {
     public update(ctx: Context, time: number) {
         const joystick = ctx.nipple.get(ctx.nippleId);
         if (joystick && joystick.frontPosition) {
-            const pos = { x: joystick.frontPosition.x / 50.0, z: -joystick.frontPosition.y / 50.0 };
+            const pos = { x: clamp(joystick.frontPosition.x / 50.0 * SENSITIVITY, -1.0, 1.0), z: clamp(-joystick.frontPosition.y / 50.0 * SENSITIVITY, -1.0, 1.0) };
+
 
             this.speed.z += clamp(this.speed.z, 1.0, 5.0) * 0.5 * ACCELERATION * pos.z * time;
             this.speed.x += ACCELERATION * pos.x * time;
