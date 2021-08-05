@@ -28,11 +28,8 @@ export const MainMenu = React.memo((props: Props) => {
     const buttons = [
         { children: 'Start Game', onClick: handleStart },
         { children: 'Create Map', onClick: handleMap },
+        { children: 'Toggle Fullscreen', onClick: handleFullScreen },
     ] as Button[];
-
-    if (!props.ctx.state.isPwa.get()) {
-        buttons.push({ children: 'Toggle Fullscreen', onClick: handleFullScreen });
-    }
 
     return (
         <section>

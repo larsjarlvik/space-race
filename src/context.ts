@@ -30,7 +30,6 @@ export interface State {
     fps: number;
     gameEndMessage?: string;
     menuIndex: number;
-    isPwa: boolean;
 }
 
 export enum KeyState {

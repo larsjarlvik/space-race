@@ -8,16 +8,6 @@ window.addEventListener('load', () => {
 const ctx = new Context();
 ui.init(ctx);
 
-const isPwa = (window.matchMedia('(display-mode: fullscreen)').matches) || (window.navigator as any).standalone || document.referrer.includes('android-app://');
-ctx.state.isPwa.set(isPwa);
-if (isPwa) {
-    ctx.state.isPwa.set(true);
-
-    document.body.addEventListener('click', () => {
-        document.body.requestFullscreen();
-    });
-}
-
 let fps = 0;
 let lastUpdate = 0;
 let lastFrame = 0;
