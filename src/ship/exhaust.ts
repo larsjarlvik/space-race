@@ -4,7 +4,7 @@ const PARTICLE_SPREAD = 0.16;
 const PARTICLE_X = 0.15;
 const PARTICLE_Y = 0.25;
 const PARTICLE_Z = 0.78;
-const PARTICLE_COUNT = 1000;
+const PARTICLE_COUNT = 200;
 const PARTICLE_LIFETIME = 20;
 
 export class Exhaust {
@@ -37,7 +37,7 @@ export class Exhaust {
         geometry.setAttribute('velocity', new THREE.Float32BufferAttribute(velocity, 3));
 
         const material = new THREE.PointsMaterial({
-            size: 0.15,
+            size: 0.25,
             map: sprite,
             blending: THREE.AdditiveBlending,
             depthTest: false,
