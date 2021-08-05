@@ -1,7 +1,7 @@
 {
     "short_name": "Space Race",
     "name": "Space Race!",
-    "display": "minimal",
+    "display": "minimal-ui",
     "orientation": "landscape",
     "start_url": "/",
     "background_color": "#000",
