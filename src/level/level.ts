@@ -28,7 +28,7 @@ export interface TileData extends Tile {
 }
 
 export class Level {
-    public level: THREE.Group;
+    public level: THREE.Mesh;
     public attributes: { [key: string]: attributes.BaseAttribute };
     orm: THREE.Texture;
     normal: THREE.Texture;
@@ -38,7 +38,7 @@ export class Level {
         const loader = new THREE.TextureLoader();
         this.orm = loader.load('/models/tile_occlusionRoughnessMetallic.png');
         this.normal = loader.load('/models/tile_normal.png');
-        this.level = new THREE.Group();
+        this.level = new THREE.Mesh();
         this.tiles = [];
         this.attributes = {
             [Attribute.FinishLine]: attributes.finish,

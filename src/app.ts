@@ -53,14 +53,17 @@ function animation(time: number) {
         if (ctx.state.gameState.get() !== GameState.Paused) {
             ctx.ship.update(ctx, FIXED_TIME_STEP);
             ctx.collision.update();
-            ctx.camera.position = ctx.ship.position;
-            ctx.camera.directional.position.set(ctx.ship.position.x - 10.0, 10.0, ctx.ship.position.z - 8.0);
-            ctx.camera.directional.target = ctx.ship.model;
-            ctx.level.update(ctx);
         }
 
         ctx.skybox.update(ctx);
         frameTime -= FIXED_TIME_STEP;
+    }
+
+    if (ctx.state.gameState.get() !== GameState.Paused) {
+        ctx.camera.position = ctx.ship.position;
+        ctx.camera.directional.position.set(ctx.ship.position.x - 10.0, 10.0, ctx.ship.position.z - 8.0);
+        ctx.camera.directional.target = ctx.ship.model;
+        ctx.level.update(ctx);
     }
     ctx.renderer.render(ctx.scene, ctx.camera.camera);
 
@@ -69,6 +72,7 @@ function animation(time: number) {
         ctx.state.fps.set(fps);
         fps = 0;
         lastUpdate = time;
+        console.log(ctx.renderer.info.render.calls);
     }
 
     ctx.update();

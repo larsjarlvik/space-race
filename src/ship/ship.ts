@@ -95,12 +95,11 @@ export class Ship {
         this.boundingBox.y = this.model.position.z;
         ctx.collision.update();
 
-        const potentials = this.boundingBox.potentials();
         const result = ctx.collision.createResult();
 
         let ground = -1000.0;
         let collider;
-        for (const blocks of potentials) {
+        for (const blocks of this.boundingBox.potentials()) {
             if (this.boundingBox.collides(blocks, result)) {
                 const c = ctx.level.getTile(result.b.x, result.b.y);
                 if (c) {
