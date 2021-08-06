@@ -12,8 +12,7 @@ export class Camera {
         this.ambient = new THREE.AmbientLight(new THREE.Color(1.0, 1.0, 1.0), 1.2);
         this.directional = new THREE.DirectionalLight(0xffffff, 0.8 * Math.PI);
 
-        const size = 1 << 31 - Math.clz32(Math.max(window.innerWidth, window.innerHeight));
-
+        const size = 1024;
         this.directional.castShadow = true;
         this.directional.shadow.mapSize.width = size;
         this.directional.shadow.mapSize.height = size;
