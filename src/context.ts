@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Collisions } from 'detect-collisions';
 import { Level } from 'level/level';
 import { Ship } from 'ship/ship';
 import { Camera } from 'camera';
@@ -41,7 +40,6 @@ export class Context {
     public renderer: THREE.WebGLRenderer;
     public scene: THREE.Scene;
     public camera: Camera;
-    public collision: Collisions;
     public skybox: Skybox;
     public keys: { [key: string]: KeyState | undefined };
 
@@ -62,11 +60,10 @@ export class Context {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
         this.renderer.outputEncoding = THREE.LinearEncoding;
-        this.collision = new Collisions();
 
         this.camera = new Camera(this);
         this.skybox = new Skybox();
-        this.ship = new Ship(this);
+        this.ship = new Ship();
         this.level = new Level(this);
 
         this.nippleArea = document.getElementById('nipple')!;
@@ -106,7 +103,6 @@ export class Context {
         if (!force && gameState === this.state.gameState.get()) return;
 
         if (gameState === GameState.Running || gameState === GameState.MapMaking) {
-            this.level.level.visible = true;
             this.ship.reset();
             this.ship.visible = true;
             this.nippleArea.classList.add('show');

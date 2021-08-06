@@ -1,6 +1,6 @@
 import * as THREE from 'three';
+import * as SAT from 'sat';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Circle } from 'detect-collisions';
 import { Context } from 'context';
 import { Exhaust } from './exhaust';
 
@@ -13,18 +13,16 @@ const DECEL_X = 1.02;
 const DECEL_Z = 1.004;
 const COLLIDER_Z_PAD = 1.0;
 const LEAN = 4.0;
-const SENSITIVITY = 2.0;
+const SENSITIVITY = 1.5;
 
 export class Ship {
     public speed: THREE.Vector3;
     public model: THREE.Object3D;
-    private boundingBox: Circle;
     private exhaust: Exhaust;
 
-    constructor(ctx: Context) {
+    constructor() {
         this.speed = new THREE.Vector3();
         this.exhaust = new Exhaust();
-        this.boundingBox = ctx.collision.createCircle(0, 0, 0.885);
     }
 
     public async load(ctx: Context): Promise<void> {
@@ -55,8 +53,6 @@ export class Ship {
         this.speed.x = 0.0;
         this.speed.y = 0.0;
         this.speed.z = 0.0;
-        this.boundingBox.x = this.model.position.x;
-        this.boundingBox.y = this.model.position.z;
     }
 
     public update(ctx: Context, time: number) {
@@ -91,30 +87,24 @@ export class Ship {
 
         this.model.position.x += this.speed.x;
         this.model.position.z -= this.speed.z;
-        this.boundingBox.x = this.model.position.x;
-        this.boundingBox.y = this.model.position.z;
-        ctx.collision.update();
-
-        const result = ctx.collision.createResult();
 
         let ground = -1000.0;
-        let collider;
-        for (const blocks of this.boundingBox.potentials()) {
-            if (this.boundingBox.collides(blocks, result)) {
-                const c = ctx.level.getTile(result.b.x, result.b.y);
-                if (c) {
-                    collider = c;
-                    if (c.userData.top > this.model.position.y - COLLIDER_Z_PAD && c.userData.bottom < this.model.position.y + COLLIDER_Z_PAD) {
-                        ground = Math.max(ground, c.userData.top);
+        const collider = new SAT.Circle(new SAT.Vector(this.position.x, this.position.z), 0.885);
+        for (const tile of ctx.level.tiles) {
+            const response = new SAT.Response();
+            if (SAT.testCirclePolygon(collider, tile.collider, response)) {
+                if (tile) {
+                    if (tile.top > this.model.position.y - COLLIDER_Z_PAD && tile.bottom < this.model.position.y + COLLIDER_Z_PAD) {
+                        ground = Math.max(ground, tile.top);
+
+                        const action = ctx.level.attributes[tile.a];
+                        if (action) action.interact(ctx, response.overlap);
                     }
                 }
             }
         }
 
         if (this.model.position.y <= ground + HOVER) {
-            const action = ctx.level.attributes[collider.userData.a];
-            if (action) action.interact(ctx, result.overlap);
-
             if (ctx.keys['Space'] && this.model.position.y <= ground + HOVER) {
                 this.speed.y = 0.1;
             }

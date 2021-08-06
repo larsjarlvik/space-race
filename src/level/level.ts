@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as detectCollisions from 'detect-collisions';
+import * as SAT from 'sat';
 import { Context } from 'context';
 import { TileMesh } from './tile';
 import * as attributes from './attributes';
@@ -22,23 +22,24 @@ export interface Tile {
 }
 
 export interface TileData extends Tile {
-    collision: detectCollisions.Body;
+    position: THREE.Vector3;
     bottom: number;
     top: number;
+    index: number;
+    collider: SAT.Polygon;
 }
 
 export class Level {
-    public level: THREE.Mesh;
+    public tiles: TileData[];
     public attributes: { [key: string]: attributes.BaseAttribute };
     orm: THREE.Texture;
     normal: THREE.Texture;
-    tiles: TileMesh[];
+    meshes: TileMesh[];
 
     constructor(ctx: Context) {
         const loader = new THREE.TextureLoader();
         this.orm = loader.load('/models/tile_occlusionRoughnessMetallic.png');
         this.normal = loader.load('/models/tile_normal.png');
-        this.level = new THREE.Mesh();
         this.tiles = [];
         this.attributes = {
             [Attribute.FinishLine]: attributes.finish,
@@ -47,21 +48,16 @@ export class Level {
             [Attribute.Slowdown]: attributes.slowdown,
         };
 
-        ctx.scene.add(this.level);
-    }
-
-    public async init() {
+        this.meshes = [];
         for (const a in Attribute) {
-            this.tiles[Attribute[a]] = new TileMesh();
-            this.tiles[Attribute[a]].load(Attribute[a]);
+            this.meshes[Attribute[a]] = new TileMesh();
+            this.meshes[Attribute[a]].load(ctx, Attribute[a]);
         }
     }
 
     public async list() {
         return new Promise<string[]>((resolve) => {
-            fetch('/api/map', {
-                method: 'GET',
-            }).then((response) => {
+            fetch('/api/map', { method: 'GET' }).then((response) => {
                 response.json().then((maps: string[]) => {
                     resolve(maps);
                 });
@@ -70,20 +66,17 @@ export class Level {
     }
 
     public async load(ctx: Context, name: string) {
-        this.level.clear();
+        this.clear(ctx);
 
         return new Promise<void>((resolve, reject) => {
-            fetch(`/api/map?m=${name}`, {
-                method: 'POST',
-            }).then((response) => {
+            fetch(`/api/map?m=${name}`, { method: 'GET' }).then((response) => {
                 if (!response.ok) {
                     reject(response.statusText);
                 }
 
                 response.json().then((tiles: Tile[]) => {
-                    tiles.forEach(t => {
-                        this.setTile(ctx, t.x, t.z, t.l, t.a ?? Attribute.Default);
-                    });
+                    tiles.forEach(t => { this.setTile(t.x, t.z, t.l, t.a ?? Attribute.Default); });
+                    this.show();
                     resolve();
                 }, (err) => {
                     reject(err);
@@ -93,65 +86,77 @@ export class Level {
     }
 
     public clear(ctx: Context) {
-        this.level.children.forEach(r => {
-            ctx.collision.remove(r.userData.collision);
+        Object.keys(this.meshes).forEach(key => {
+            (this.meshes[key] as TileMesh).clear(ctx);
         });
-        this.level.clear();
+        this.tiles = [];
     }
 
-    public update(ctx: Context) {
-        this.level.children.forEach((mesh: THREE.Mesh) => {
-            if (ctx.camera.position.distanceTo(mesh.position) < ctx.camera.far) {
-                (mesh.material as THREE.MeshPhysicalMaterial).opacity += Math.max(0.002, (ctx.camera.far - ctx.camera.position.distanceTo(mesh.position)) / ctx.camera.far * 0.02);
-            }
-        });
-
+    public update() {
         Object.keys(this.attributes).forEach(key => {
             const a = this.attributes[key];
-            if (a.update) a.update(this.tiles[key]);
+            if (a.update) a.update(this.meshes[key]);
         });
     }
 
-    public getTile(x: number, z: number): THREE.Mesh | null {
+    public getTile(x: number, z: number): TileData | null {
         const tx = x / TILE_SIZE + 3;
         const tz = (Math.abs(z - 4) - TILE_SIZE / 2) / 4;
 
-        const result = this.level.children.filter(mesh => mesh.userData.x === tx && mesh.userData.z === tz);
-        return result.length > 0 ? result[0] as THREE.Mesh : null;
+        const result = this.tiles.filter(t => t.x === tx && t.z === tz);
+        return result.length > 0 ? result[0] : null;
     }
 
-    public setTile(ctx: Context, x: number, z: number, l: number, a: Attribute) {
-        this.deleteTile(ctx, x, z);
+    public setTile(x: number, z: number, l: number, a: Attribute) {
+        this.deleteTile(x, z);
 
         if (l > 0.0) {
             const r = TILE_SIZE / 2.0;
-            const world_x = (x - 3.5) * TILE_SIZE + r;
-            const world_z = -z * TILE_SIZE + r;
-
             const top = l - 1;
-            const mesh = this.tiles[a].createMesh(world_x, top / 2.0 + 0.025, world_z, TILE_SIZE - 0.1, top + 0.05);
-            const collision = ctx.collision.createPolygon(world_x, world_z, [[-r, -r], [r, -r], [r, r], [-r, r]]);
 
-            mesh.userData = { x, z, a, l, collision, bottom: -0.03, top };
-            this.level.add(mesh);
+            const position = new THREE.Vector3(
+                (x - 3.5) * TILE_SIZE + r,
+                top / 2.0 + 0.025,
+                -z * TILE_SIZE + r,
+            );
+
+            const index = (this.meshes[a] as TileMesh).addTile(position, top + 0.05);
+            const collider = new SAT.Box(new SAT.Vector(position.x - TILE_SIZE / 2.0, position.z - TILE_SIZE / 2.0), TILE_SIZE, TILE_SIZE).toPolygon();
+            this.tiles.push({ x, z, a, l, bottom: -0.03, top, position: position, index, collider });
         }
     }
 
     public getTileData(): Tile[] {
-        return this.level.children.map(t => ({
-            x: t.userData.x,
-            z: t.userData.z,
-            l: t.userData.l,
-            a: t.userData.a,
-        }));
+        return this.tiles.map(t => ({
+            x: t.x,
+            z: t.z,
+            l: t.l,
+            a: t.a,
+        } as Tile));
     }
 
-    private deleteTile(ctx: Context, x: number, z: number) {
-        this.level.children.forEach((mesh) => {
-            if (mesh.userData.x === x && mesh.userData.z === z) {
-                this.level.remove(mesh);
-                ctx.collision.remove(mesh.userData.collision);
+    private deleteTile(x: number, z: number) {
+        this.tiles = this.tiles.filter(t => {
+            if (t.x === x && t.z === z) {
+                (this.meshes[t.a] as TileMesh).removeTile(t.index);
+                return false;
             }
+
+            return true;
+        });
+    }
+
+    public hide() {
+        this.meshes.forEach(t => {
+            t.top.visible = false;
+            t.sides.visible = false;
+        });
+    }
+
+    public show() {
+        this.meshes.forEach(t => {
+            t.top.visible = true;
+            t.sides.visible = true;
         });
     }
 }
